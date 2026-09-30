@@ -6,7 +6,7 @@ const proof = {
   device: 'HP Snapdragon X reference target',
   provider: 'QNN',
   model: 'scene-classifier.onnx',
-  modelSha256: 'abc123',
+  modelSha256: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
   npuCoveragePct: 98.4,
   p50Ms: 8.2,
   p95Ms: 10.1,
@@ -24,7 +24,15 @@ describe('hardware proof gate', () => {
     expect(validateHardwareProof({ ...proof, npuCoveragePct: 42 }).valid).toBe(false);
   });
 
+  it('rejects a non-SHA256 model identity', () => {
+    expect(validateHardwareProof({ ...proof, modelSha256: 'abc123' }).valid).toBe(false);
+  });
+
   it('rejects the unfilled template', () => {
     expect(validateHardwareProof({ ...proof, modelSha256: 'REPLACE_WITH_MODEL_SHA256' }).valid).toBe(false);
+  });
+
+  it('rejects an invalid verification timestamp', () => {
+    expect(validateHardwareProof({ ...proof, verifiedAt: 'not-a-date' }).valid).toBe(false);
   });
 });
