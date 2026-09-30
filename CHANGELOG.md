@@ -4,6 +4,7 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Upgraded the pinned GitHub upload-artifact action to the current Node.js 24-based v7 line and included third-party license evidence in the assurance artifact.
 - Made the project rights posture explicit and fail-closed: package metadata is `UNLICENSED`, a root rights notice is required, and CI rejects drift between project and lockfile metadata.
 - Added deterministic runtime third-party license notice generation to production builds; the build fails if a shipped runtime package lacks a discoverable license/copying text.
 - Hardened the **production** CSP by removing `unsafe-inline` from `script-src` during the build while preserving Vite React-refresh compatibility in development; the smoke gate verifies the emitted policy.
