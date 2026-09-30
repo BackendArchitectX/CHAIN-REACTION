@@ -11,6 +11,8 @@ const stampFile = join(cacheDir, 'dependencies.sha256');
 const packageJson = join(projectRoot, 'package.json');
 const packageLock = join(projectRoot, 'package-lock.json');
 const viteBinary = join(projectRoot, 'node_modules', '.bin', process.platform === 'win32' ? 'vite.cmd' : 'vite');
+const reactPackage = join(projectRoot, 'node_modules', 'react', 'package.json');
+const reactDomPackage = join(projectRoot, 'node_modules', 'react-dom', 'package.json');
 
 function fail(message) {
   console.error(`\n[CHAIN//REACTION] ${message}\n`);
@@ -50,10 +52,10 @@ function dependencyFingerprint() {
 function ensureDependencies() {
   const fingerprint = dependencyFingerprint();
   const previous = existsSync(stampFile) ? readFileSync(stampFile, 'utf8').trim() : '';
-  const dependenciesReady = existsSync(viteBinary) && previous === fingerprint;
+  const dependenciesReady = [viteBinary, reactPackage, reactDomPackage].every(existsSync) && previous === fingerprint;
 
   if (process.env.CHAIN_REACTION_SKIP_INSTALL === '1') {
-    if (!existsSync(viteBinary)) fail('Dependencies are missing and CHAIN_REACTION_SKIP_INSTALL=1 is set.');
+    if (!dependenciesReady) fail('Dependencies are missing or stale and CHAIN_REACTION_SKIP_INSTALL=1 is set.');
     return;
   }
 
@@ -76,5 +78,7 @@ function ensureDependencies() {
 
 assertRuntime();
 ensureDependencies();
+console.log('[CHAIN//REACTION] Running startup preflight...');
+run(npmCommand, ['run', 'doctor']);
 console.log('[CHAIN//REACTION] Starting CITY//01 at http://127.0.0.1:5173 ...');
 run(npmCommand, ['run', 'dev', '--', '--open']);
