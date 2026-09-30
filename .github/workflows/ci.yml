@@ -17,4 +17,6 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Dependency security gate
+        run: npm audit --audit-level=high
       - run: npm run verify
