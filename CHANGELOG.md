@@ -4,6 +4,7 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Hardened the browser-global architecture gate so it detects executable global references without falsely rejecting ordinary domain text that happens to contain words such as "window".
 - Centralized intervention commit eligibility in the deterministic decision domain so stale forecasts, Safety Kernel rejections, and missed intervention windows cannot drift between UI and application logic.
 - Added deterministic tests for commit eligibility and exposed blocked-action reasons through an accessible status message.
 - Switched the application to a premium light mission-control theme with high-contrast surfaces, state-aware accents, and matching browser theme metadata.

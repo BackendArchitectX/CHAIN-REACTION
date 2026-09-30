@@ -96,7 +96,9 @@ for (const absolute of sourceFiles) {
     if (/from\s+['"]react['"]|require\(['"]react['"]\)/.test(content)) {
       fail('layer-boundary', path, 'Deterministic domain layers must not depend on React.');
     }
-    if (/\b(window|document|navigator|localStorage|sessionStorage)\b/.test(content)) {
+    const browserGlobalReference = /\b(?:window|document|navigator|localStorage|sessionStorage)\b(?=\s*(?:\.|\[|\(|=))/;
+    const browserGlobalTypeof = /\btypeof\s+(?:window|document|navigator|localStorage|sessionStorage)\b/;
+    if (browserGlobalReference.test(content) || browserGlobalTypeof.test(content)) {
       fail('browser-boundary', path, 'Deterministic domain layers must not access browser globals.');
     }
     if (/\b(fetch|WebSocket|EventSource)\s*\(/.test(content)) {
