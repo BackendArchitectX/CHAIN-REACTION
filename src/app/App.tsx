@@ -1,31 +1,25 @@
 import React from 'react';
 import { useMission } from './useMission';
-import type { AppTab } from './types';
 import { CommandView } from '../features/command/CommandView';
 import { FuturesView } from '../features/futures/FuturesView';
 import { ChaosLabView } from '../features/chaos/ChaosLabView';
 import { EdgeLabView } from '../features/edge/EdgeLabView';
 import { AuditView } from '../features/audit/AuditView';
-
-const TABS: AppTab[] = ['COMMAND', 'FUTURES', 'CHAOS LAB', 'EDGE LAB', 'AUDIT'];
-
-function tabSlug(tab: AppTab) {
-  return tab.toLowerCase().replaceAll(' ', '-');
-}
+import { APP_TABS, tabSlug } from './navigation';
 
 export function App() {
   const mission = useMission();
 
   const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex: number | null = null;
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % TABS.length;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + TABS.length) % TABS.length;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % APP_TABS.length;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + APP_TABS.length) % APP_TABS.length;
     if (event.key === 'Home') nextIndex = 0;
-    if (event.key === 'End') nextIndex = TABS.length - 1;
+    if (event.key === 'End') nextIndex = APP_TABS.length - 1;
     if (nextIndex == null) return;
 
     event.preventDefault();
-    const nextTab = TABS[nextIndex];
+    const nextTab = APP_TABS[nextIndex];
     mission.setTab(nextTab);
     window.requestAnimationFrame(() => document.getElementById(`tab-${tabSlug(nextTab)}`)?.focus());
   };
@@ -46,7 +40,7 @@ export function App() {
     </header>
 
     <nav className="nav" aria-label="Mission workspaces" role="tablist">
-      {TABS.map((tab, index) => (
+      {APP_TABS.map((tab, index) => (
         <button
           key={tab}
           id={`tab-${tabSlug(tab)}`}

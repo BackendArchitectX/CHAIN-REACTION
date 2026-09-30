@@ -338,6 +338,8 @@ http://127.0.0.1:4173
 
 For terminal-started processes, press `Ctrl+C` to stop the foreground server. The current architecture starts no separate database, cache, broker, or backend service.
 
+Workspace deep links use stable URL hashes such as `#command`, `#futures`, `#chaos-lab`, `#edge-lab`, and `#audit`. Browser Back/Forward navigation synchronizes the active workspace without introducing a routing dependency.
+
 ## API, database, and realtime boundaries
 
 The current product has no backend HTTP API and no production database. Mission state is browser-process state, while scenarios and hardware-proof templates are version-controlled assets.

@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Added stable hash deep links for each mission workspace and synchronized browser Back/Forward navigation without introducing a routing library.
+- Added deterministic navigation-contract tests for valid, default, and unrelated hash locations.
 - Tightened the hardware evidence claim boundary: imported QNN profiles can be accepted for structural review and can expose reported metrics, but the browser no longer labels self-supplied evidence as independently verified hardware execution.
 - Replaced unsupported assurance statuses with explicit NOT IMPLEMENTED / NOT CLAIMED states for native packaging and municipal effectiveness.
 - Hardened light-theme small-text contrast and added executable 4.5:1 palette contrast checks to the accessibility gate.

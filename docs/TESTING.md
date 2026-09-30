@@ -72,3 +72,10 @@ Manual checks are evidence. They must not be converted into unmeasured claims.
 `tests/ui-render.test.tsx` renders the application shell through React's server renderer without a browser DOM. This catches broken imports, browser-global leakage during render, and loss of the primary mission-control structure without adding a heavyweight browser-test dependency.
 
 Interactive accessibility behavior remains protected by the structural accessibility gate and is complemented by the documented manual finalist walkthrough.
+
+
+## Workspace navigation
+
+`tests/navigation.test.ts` protects the stable hash contract for mission workspaces. Direct hashes resolve deterministically, unrelated anchors are ignored, and the empty location resolves to the COMMAND workspace. Browser history synchronization is implemented with native History API events rather than a routing dependency.
+
+The HTTP smoke gate confirms that all hash deep links share the same production shell because fragments are client-side only. Full interactive Back/Forward behavior remains part of the manual browser walkthrough because the repository intentionally does not add a heavyweight browser-test stack solely for this small navigation surface.

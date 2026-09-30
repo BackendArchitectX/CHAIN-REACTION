@@ -10,6 +10,7 @@ import { decisionStability, evaluateCommitEligibility, informationValue } from '
 import { detectEdgeCapability, validateHardwareProof } from '../edge/capabilities';
 import type { ChaosFlags, PlanId } from '../core/types';
 import type { AppTab, AuditEntry } from './types';
+import { DEFAULT_TAB, tabFromHash, tabSlug } from './navigation';
 
 const INITIAL_CHAOS: ChaosFlags = {
   roadBlocked: false,
@@ -23,7 +24,10 @@ const MAX_HARDWARE_PROOF_BYTES = 1_000_000;
 
 export function useMission() {
   const [t, setT] = useState(0);
-  const [tab, setTab] = useState<AppTab>('COMMAND');
+  const [tab, setTabState] = useState<AppTab>(() => {
+    if (typeof window === 'undefined') return DEFAULT_TAB;
+    return tabFromHash(window.location.hash) ?? DEFAULT_TAB;
+  });
   const [chaos, setChaos] = useState<ChaosFlags>(INITIAL_CHAOS);
   const [worldRevision, setWorldRevision] = useState(0);
   const [forecastRevision, setForecastRevision] = useState(0);
@@ -53,6 +57,33 @@ export function useMission() {
     }, 250);
     return () => window.clearInterval(timer);
   }, [playing]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const syncTabFromLocation = () => {
+      const next = tabFromHash(window.location.hash);
+      if (next) setTabState(next);
+    };
+
+    window.addEventListener('popstate', syncTabFromLocation);
+    window.addEventListener('hashchange', syncTabFromLocation);
+    return () => {
+      window.removeEventListener('popstate', syncTabFromLocation);
+      window.removeEventListener('hashchange', syncTabFromLocation);
+    };
+  }, []);
+
+  const setTab = (next: AppTab) => {
+    setTabState(next);
+    if (typeof window === 'undefined') return;
+
+    const nextHash = `#${tabSlug(next)}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, '', nextHash);
+    }
+  };
+
 
   const appendAudit = (kind: AuditEntry['kind'], message: string, refPrefix: string, at = t) => {
     const ref = `${refPrefix}-${String(auditSequence.current++).padStart(4, '0')}`;
