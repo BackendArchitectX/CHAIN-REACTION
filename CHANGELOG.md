@@ -2,16 +2,20 @@
 
 All notable repository-level changes are documented here.
 
-## 0.4.0 — Industry lifecycle hardening
+## 0.4.0 — Industry lifecycle and architecture hardening
 
 - Added one-step cross-platform bootstrap with automatic browser launch.
 - Added Windows `start.cmd`, PowerShell `run.ps1`, and Unix `start.sh` entry points.
 - Added runtime/repository doctor and deterministic clean commands.
-- Pinned the supported runtime to Node.js 22 LTS / npm 10+.
+- Tightened the supported runtime to Node.js `>=22.12 <23` and npm 10+ to match the actual Vite/Vitest toolchain.
+- Pinned direct dependency versions and upgraded the test runner to a zero-known-vulnerability set in the validated CI install.
+- Refactored the monolithic application entry into `app`, `features`, `shared`, and reusable `ui` layers while preserving a UI-independent deterministic `core`.
+- Added a React fail-safe Error Boundary so unexpected presentation failure does not silently render stale state as current.
+- Extended the project doctor to enforce architecture boundaries, required feature folders, thin bootstrap, local-only development binding, and absence of React imports from `src/core`.
 - Added EditorConfig, npm policy, expanded ignore policy, CODEOWNERS, security policy, architecture/development/repository standards documentation.
 - Made local-only binding the default; LAN exposure is explicit.
 - Removed the legacy root standalone demo to reduce repository duplication.
-- Standardized the competition repository around `main` as its only maintained branch.
+- Standardized and automatically enforces `main` as the only maintained repository branch, including branch-creation cleanup.
 
 ## 0.3.0 — Assurance architecture
 
