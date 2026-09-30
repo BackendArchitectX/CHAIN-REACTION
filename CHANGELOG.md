@@ -13,6 +13,11 @@ All notable repository-level changes are documented here.
 - Hardened main-only branch pruning with robust branch-name URL encoding.
 - Added an operations runbook covering startup, failure modes, recovery, verification, and network posture.
 - Clarified that feature isolation lives under `src/features/*` while Git remains single-branch on `main`.
+- Added production artifact integrity with SHA-256 build manifests and a hash-verifying smoke gate.
+- Added CycloneDX SBOM generation and CI assurance-artifact publication.
+- Added static bundle budgets and disabled production source maps.
+- Added hardened HTML metadata including CSP and no-referrer policy.
+- Added Architecture Decision Records for main-only trunk development and deterministic core boundaries.
 
 ## 0.4.0 — Industry lifecycle and architecture hardening
 

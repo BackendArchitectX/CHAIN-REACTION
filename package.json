@@ -17,11 +17,13 @@
     "lint": "node ./scripts/quality.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node ./scripts/build-manifest.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "doctor": "node ./scripts/doctor.mjs",
     "clean": "node ./scripts/clean.mjs",
-    "verify": "npm run doctor && npm run lint && npm run typecheck && npm run test && npm run build"
+    "verify": "npm run doctor && npm run lint && npm run test && npm run build && npm run smoke && npm run sbom",
+    "smoke": "node ./scripts/smoke.mjs",
+    "sbom": "node ./scripts/sbom.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

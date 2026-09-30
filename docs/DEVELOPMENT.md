@@ -36,8 +36,10 @@ npm run doctor     # environment, architecture, lockfile, and startup contract
 npm run lint       # zero-dependency repository and layer quality gate
 npm run typecheck  # strict TypeScript validation for src + tests
 npm test           # deterministic assurance suite
-npm run build      # production build
-npm run verify     # complete local quality gate
+npm run build      # typecheck + production build + SHA-256 manifest
+npm run smoke      # validate production references, hashes, and bundle budgets
+npm run sbom       # generate CycloneDX SBOM
+npm run verify     # complete local release-quality gate
 npm run clean      # remove generated output/cache
 npm run dev        # localhost-only development server on :5173
 npm run dev:lan    # explicit LAN exposure on :5173

@@ -33,3 +33,12 @@ jobs:
         run: npm audit --audit-level=high
       - name: Repository verification
         run: npm run verify
+      - name: Upload assurance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chain-reaction-assurance
+          path: |
+            dist/build-manifest.json
+            dist/sbom.cdx.json
+          if-no-files-found: error
+          retention-days: 7

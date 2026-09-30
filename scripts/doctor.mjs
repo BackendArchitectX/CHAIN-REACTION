@@ -41,6 +41,12 @@ const requiredPaths = [
   ['start.sh', 'Unix launcher'],
   ['scripts/bootstrap.mjs', 'one-step bootstrap automation'],
   ['scripts/quality.mjs', 'repository quality gate'],
+  ['scripts/build-manifest.mjs', 'production artifact manifest'],
+  ['scripts/smoke.mjs', 'production smoke gate'],
+  ['scripts/sbom.mjs', 'CycloneDX SBOM generator'],
+  ['docs/SUPPLY_CHAIN.md', 'software supply-chain contract'],
+  ['docs/adr/0001-main-only-trunk.md', 'main-only trunk ADR'],
+  ['docs/adr/0002-deterministic-core.md', 'deterministic core ADR'],
 ];
 
 for (const [path, detail] of requiredPaths) record(path, exists(path), detail);
@@ -59,6 +65,9 @@ if (existsSync(packagePath)) {
   record('Node engine contract', pkg.engines?.node === '>=22.12 <23', pkg.engines?.node ?? 'missing');
   record('npm engine contract', pkg.engines?.npm === '>=10 <11', pkg.engines?.npm ?? 'missing');
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
+  record('Smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
+  record('SBOM gate wired', pkg.scripts?.sbom === 'node ./scripts/sbom.mjs', pkg.scripts?.sbom ?? 'missing');
+  record('Artifact manifest wired', pkg.scripts?.build?.includes('build-manifest.mjs') === true, pkg.scripts?.build ?? 'missing');
 
   if (existsSync(lockPath)) {
     const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
@@ -79,6 +88,12 @@ if (existsSync(corePath)) {
     .filter(file => file.endsWith('.ts') || file.endsWith('.tsx'))
     .filter(file => /from\s+['"]react['"]|require\(['"]react['"]\)/.test(readFileSync(join(corePath, file), 'utf8')));
   record('Core/UI dependency boundary', reactImports.length === 0, reactImports.length ? reactImports.join(', ') : 'core has no React imports');
+}
+
+const vitePath = join(root, 'vite.config.ts');
+if (existsSync(vitePath)) {
+  const viteConfig = readFileSync(vitePath, 'utf8');
+  record('Production source maps disabled', /sourcemap:\s*false/.test(viteConfig), 'vite.config.ts');
 }
 
 record('Legacy root demo removed', !exists('demo.html'), 'single application entry path');

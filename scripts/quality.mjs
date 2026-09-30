@@ -47,6 +47,22 @@ if (!existsSync(packageLockPath)) {
     fail('engine-parity', 'package-lock.json', 'Root lockfile engine contract must match package.json.');
   }
 
+  const requiredScripts = {
+    start: 'node ./scripts/bootstrap.mjs',
+    lint: 'node ./scripts/quality.mjs',
+    smoke: 'node ./scripts/smoke.mjs',
+    sbom: 'node ./scripts/sbom.mjs',
+  };
+  for (const [name, expected] of Object.entries(requiredScripts)) {
+    if (pkg.scripts?.[name] !== expected) fail('script-contract', `package.json:scripts.${name}`, `Expected "${expected}".`);
+  }
+  if (!pkg.scripts?.build?.includes('build-manifest.mjs')) {
+    fail('artifact-manifest', 'package.json:scripts.build', 'Production build must emit the SHA-256 build manifest.');
+  }
+  if (!pkg.scripts?.verify?.includes('npm run smoke') || !pkg.scripts?.verify?.includes('npm run sbom')) {
+    fail('release-gate', 'package.json:scripts.verify', 'Verification must include smoke and SBOM gates.');
+  }
+
   for (const [group, dependencies] of Object.entries({ dependencies: pkg.dependencies ?? {}, devDependencies: pkg.devDependencies ?? {} })) {
     for (const [name, version] of Object.entries(dependencies)) {
       if (typeof version !== 'string' || !isExactVersion(version)) {
@@ -92,6 +108,18 @@ const mainPath = join(root, 'src', 'main.tsx');
 if (existsSync(mainPath)) {
   const lines = readFileSync(mainPath, 'utf8').split(/\r?\n/).length;
   if (lines > 30) fail('thin-bootstrap', 'src/main.tsx', `Expected <=30 lines, found ${lines}.`);
+}
+
+const viteConfigPath = join(root, 'vite.config.ts');
+if (existsSync(viteConfigPath) && !/sourcemap:\s*false/.test(readFileSync(viteConfigPath, 'utf8'))) {
+  fail('production-sourcemaps', 'vite.config.ts', 'Production source maps must be disabled for the release build.');
+}
+
+const indexPath = join(root, 'index.html');
+if (existsSync(indexPath)) {
+  const html = readFileSync(indexPath, 'utf8');
+  if (!html.includes('Content-Security-Policy')) fail('html-security', 'index.html', 'Content Security Policy metadata is required.');
+  if (!html.includes('name="referrer"')) fail('html-security', 'index.html', 'Referrer policy metadata is required.');
 }
 
 if (existsSync(join(root, 'demo.html'))) fail('single-entrypoint', 'demo.html', 'Legacy duplicate application entry point must stay removed.');

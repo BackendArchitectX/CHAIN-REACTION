@@ -45,9 +45,11 @@ npm run dev        # local-only development server
 npm run dev:lan    # explicitly expose development server to LAN
 npm run typecheck  # strict TypeScript validation
 npm test           # deterministic assurance suite
-npm run build      # production build
+npm run build      # typecheck + production build + SHA-256 build manifest
 npm run lint       # repository/layer quality gate
-npm run verify     # doctor + lint + typecheck + tests + production build
+npm run smoke      # production asset/hash/budget smoke gate
+npm run sbom       # CycloneDX software bill of materials
+npm run verify     # complete local release-quality gate
 npm run clean      # remove generated output/cache
 npm run preview    # preview production output locally
 ```
@@ -58,7 +60,17 @@ Before treating a change as complete:
 npm run verify
 ```
 
-GitHub Actions restores the committed lockfile with npm ci, runs the same verification path, and enforces the high/critical dependency-security gate.
+GitHub Actions restores the committed lockfile with npm ci, runs the same verification path, enforces the high/critical dependency-security gate, and publishes the build manifest plus CycloneDX SBOM as short-lived assurance evidence.
+
+## Production assurance
+
+Every successful verification produces:
+
+- `dist/build-manifest.json` with SHA-256 and byte size for every production artifact.
+- `dist/sbom.cdx.json` with a CycloneDX software bill of materials.
+- A production smoke check that verifies artifact hashes, local asset references, absence of source maps, and static bundle-size budgets.
+
+See `docs/SUPPLY_CHAIN.md` for the supply-chain contract and `docs/adr/` for architectural decisions.
 
 ## Product capabilities
 
