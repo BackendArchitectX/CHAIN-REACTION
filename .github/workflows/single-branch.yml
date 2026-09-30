@@ -9,18 +9,26 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: main-only-policy
+  cancel-in-progress: false
+
 jobs:
   prune:
     if: github.event_name != 'create' || github.event.ref_type == 'branch'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - name: Keep main as the only branch
+      - name: Keep main as the only repository branch
         env:
           GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
         run: |
-          gh api repos/${{ github.repository }}/branches --paginate --jq '.[].name' \
-            | grep -v '^main$' \
-            | while read -r branch; do
-                encoded=$(printf '%s' "$branch" | sed 's#/#%2F#g')
-                gh api --method DELETE "repos/${{ github.repository }}/git/refs/heads/$encoded"
-              done
+          set -euo pipefail
+          while IFS= read -r branch; do
+            [[ "$branch" == "main" ]] && continue
+            encoded=$(printf '%s' "$branch" | jq -sRr @uri)
+            echo "Deleting non-main branch: $branch"
+            gh api --method DELETE "repos/$REPOSITORY/git/refs/heads/$encoded"
+          done < <(gh api "repos/$REPOSITORY/branches" --paginate --jq '.[].name')
