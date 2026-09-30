@@ -83,8 +83,8 @@ export function App() {
         <b>
           {mission.chaos.npuUnavailable
             ? 'UNAVAILABLE / CPU FALLBACK'
-            : mission.edgeCapability.npuVerified
-              ? `VERIFIED ${mission.edgeCapability.npuCoveragePct}%`
+            : mission.edgeCapability.profileAccepted
+              ? `PROFILE ACCEPTED ${mission.edgeCapability.npuCoveragePct}% / NOT ATTESTED`
               : 'PROOF PENDING HARDWARE'}
         </b>
       </span>

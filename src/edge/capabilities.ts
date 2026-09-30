@@ -20,7 +20,7 @@ export type EdgeCapability = {
   architecture: string;
   runtime: string;
   qnnRequested: boolean;
-  npuVerified: boolean;
+  profileAccepted: boolean;
   modelArtifact: string;
   cloudInference: number;
   proofReason: string;
@@ -92,7 +92,7 @@ export function validateHardwareProof(input: unknown): HardwareProofValidation {
 
   return {
     valid: true,
-    reason: 'Exact-device QNN profile passes the CHAIN//REACTION hardware proof gate.',
+    reason: 'QNN evidence profile passes structural and consistency checks; execution provenance is user-supplied and not independently attested by this browser.',
     proof,
   };
 }
@@ -106,9 +106,9 @@ export function detectEdgeCapability(input?: unknown, userAgent = ''): EdgeCapab
 
   return {
     architecture,
-    runtime: proof ? 'ONNX Runtime + QNN proof loaded' : 'Browser MVP — ONNX Runtime/QNN integration gate pending',
+    runtime: proof ? 'QNN evidence profile loaded — provenance not attested' : 'Browser runtime — exact-device QNN evidence pending',
     qnnRequested: input != null,
-    npuVerified: validation.valid,
+    profileAccepted: validation.valid,
     modelArtifact: proof?.model ?? 'No production NPU artifact loaded',
     cloudInference: 0,
     proofReason: validation.reason,

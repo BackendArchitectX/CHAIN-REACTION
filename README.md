@@ -106,7 +106,7 @@ npm run verify
 - **Independent Safety Kernel** — hard constraints reject unsafe or infeasible simulated plans.
 - **Forecast Lease** — stale forecasts expire after world changes or TTL expiration.
 - **Proof of Prevention** — paired counterfactuals quantify intervention impact.
-- **Edge Lab** — NPU status remains unverified until exact-device QNN evidence passes the proof gate.
+- **Edge Lab** — accepts structurally valid exact-device QNN evidence profiles for review while keeping execution provenance explicitly not independently attested.
 - **Audit & Reproducibility** — deterministic trace fingerprints and reproducibility-capsule export.
 
 ## Architecture
@@ -307,7 +307,7 @@ EDGE LAB requires an exact-device `chainreaction.qnn-proof.v1` profile with:
 - finite cold-load time and memory values;
 - valid verification timestamp.
 
-Untrusted proof input is schema-checked and bounded before metrics are accepted. Invalid proof data never surfaces as verified accelerator metrics.
+Untrusted proof input is schema-checked and bounded before metrics are accepted. Accepted values are labeled as reported evidence; browser-side acceptance does not independently attest the device, profiler, or QNN execution provenance. Invalid input never surfaces accelerator metrics.
 
 ## Configuration
 
@@ -375,7 +375,7 @@ See `docs/OPERATIONS.md` for the runbook and `docs/RELEASE.md` for rollback guid
 - CITY//01 is synthetic and is not operational municipal telemetry.
 - There is no production backend, database, authentication service, broker, or persistent server state.
 - The mission clock is simulated rather than remote realtime telemetry.
-- Snapdragon/QNN acceleration remains unverified until exact-device proof passes the hardware gate.
+- Snapdragon/QNN execution provenance is not independently attested by the browser; accepted profile values remain reported evidence until external exact-device artifacts are reviewed.
 - Persistent restart recovery is not implemented; browser refresh/application restart resets mission state.
 - No production SLO, uptime, throughput, or user-capacity claims are made.
 - Automated accessibility checks do not replace a manual assistive-technology review.

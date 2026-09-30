@@ -10,5 +10,5 @@
   "coldLoadMs": 0,
   "memoryMb": 0,
   "verifiedAt": null,
-  "note": "Template only. This file intentionally fails the hardware proof gate until populated from exact-device profiling."
+  "note": "Template only. This file intentionally fails structural validation until populated from exact-device profiling. A populated profile is still user-supplied evidence and is not independently attested by the browser."
 }

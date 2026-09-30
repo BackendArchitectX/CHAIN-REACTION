@@ -112,7 +112,7 @@ export function useMission() {
     chaos,
     evidence: evidenceDiagnostics,
     lease: leaseInfo,
-    npuVerified: edgeCapability.npuVerified,
+    hardwareEvidenceAccepted: edgeCapability.profileAccepted,
   });
   const trust = runtimeTrust.state;
   const commitEligibility = evaluateCommitEligibility(lease, selectedEvaluation);
@@ -202,9 +202,9 @@ export function useMission() {
       const result = detectEdgeCapability(parsed, runtimeUserAgent);
       appendAudit(
         'system',
-        result.npuVerified
-          ? 'Exact-device QNN profile passed the hardware proof gate.'
-          : `Hardware proof rejected: ${result.proofReason}`,
+        result.profileAccepted
+          ? 'QNN evidence profile accepted for review; exact-device execution provenance remains independently unverified.'
+          : `Hardware evidence profile rejected: ${result.proofReason}`,
         'EDGE-PROOF',
       );
     } catch {
@@ -235,6 +235,7 @@ export function useMission() {
       lease: leaseInfo,
       decisionStability: stability,
       hardwareProof: hardwareValidation.valid ? hardwareValidation.proof : null,
+      hardwareEvidenceStatus: edgeCapability.profileAccepted ? 'PROFILE_ACCEPTED_NOT_ATTESTED' : 'UNVERIFIED',
       trace: liveRun.final.trace,
       audit,
       traceFingerprint: traceFingerprint({ seed: SCENARIO_SEED, activePlan, activeCommitSec, trace: liveRun.final.trace, audit }),

@@ -160,6 +160,6 @@ export type SensitivityItem = {
 
 export type AssuranceProof = {
   claim: string;
-  status: 'PROVEN' | 'DESIGNED' | 'PENDING HARDWARE';
+  status: 'PROVEN' | 'PENDING HARDWARE' | 'NOT IMPLEMENTED' | 'NOT CLAIMED';
   evidence: string;
 };

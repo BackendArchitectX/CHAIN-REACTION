@@ -11,8 +11,8 @@ Please report security findings privately to the repository owner rather than pu
 - The application has no backend API, authentication service, production database, broker, or cloud inference dependency.
 - Development and production preview bind to `127.0.0.1` by default.
 - LAN exposure requires the explicit `npm run dev:lan` command.
-- Hardware/NPU claims fail closed until exact-device evidence passes validation.
-- Hardware-proof JSON is treated as untrusted input and is size, schema, digest, timestamp, and numeric-bound validated before metrics are surfaced.
+- Hardware/NPU evidence fails closed when the imported profile is malformed; a structurally accepted profile is still labeled not independently attested.
+- Hardware-evidence JSON is treated as untrusted input and is size, schema, digest, timestamp, and numeric-bound validated before reported metrics are surfaced.
 - Hard safety constraints are evaluated by the independent deterministic Safety Kernel.
 - Intervention commitment also requires a current forecast lease and a non-missed decision horizon.
 - Unexpected UI errors enter a safe recovery screen instead of presenting stale simulation output as current.

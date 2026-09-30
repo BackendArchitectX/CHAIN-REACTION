@@ -11,7 +11,7 @@ CHAIN//REACTION is intentionally a local-first browser application with a determ
 | Safety Kernel | In scope | Independent deterministic hard-constraint evaluation |
 | Intervention commit policy | In scope | One deterministic eligibility rule shared by orchestration and UI |
 | Scenario data | In scope | Versioned repository data under `src/data` and `public/scenarios` |
-| Hardware proof | In scope as a boundary | QNN/NPU status fails closed until exact-device evidence exists |
+| Hardware evidence | In scope as a boundary | Imported QNN profiles are schema/consistency checked; browser acceptance does not independently attest execution provenance |
 | Local exports | In scope | Reproducibility capsule is downloaded by the user's browser |
 | Backend/API server | Not present | No fake controllers, REST layer, auth middleware, or network service is introduced |
 | Database/migrations | Not present | No persistence schema, migrations, backup, locking, or transaction claims |

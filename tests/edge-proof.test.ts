@@ -50,9 +50,16 @@ describe('hardware proof gate', () => {
 
   it('does not surface malformed proof metrics through capability state', () => {
     const capability = detectEdgeCapability({ ...proof, p50Ms: '8.2' }, 'ARM64');
-    expect(capability.npuVerified).toBe(false);
+    expect(capability.profileAccepted).toBe(false);
     expect(capability.p50Ms).toBeUndefined();
     expect(capability.architecture).toBe('ARM64 detected');
+  });
+
+  it('accepts a structurally valid profile without overstating independent hardware verification', () => {
+    const capability = detectEdgeCapability(proof, 'ARM64');
+    expect(capability.profileAccepted).toBe(true);
+    expect(capability.proofReason).toContain('not independently attested');
+    expect(capability.npuCoveragePct).toBe(proof.npuCoveragePct);
   });
 
   it('does not read browser globals inside the edge proof boundary', () => {

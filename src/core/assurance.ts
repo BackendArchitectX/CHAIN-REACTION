@@ -9,6 +9,6 @@ export const assuranceProofs: AssuranceProof[] = [
   { claim: 'Forecasts expire after world change or TTL', status: 'PROVEN', evidence: 'Forecast Lease revision and TTL tests' },
   { claim: 'Run trace is reproducibly fingerprinted', status: 'PROVEN', evidence: 'Stable serialized trace fingerprint tests' },
   { claim: 'Snapdragon NPU execution', status: 'PENDING HARDWARE', evidence: 'Requires exact-device QNN compile, execute, and layer placement profile' },
-  { claim: 'Windows ARM64 packaging', status: 'DESIGNED', evidence: 'Tauri/Rust production architecture documented; Vite web build currently runnable' },
-  { claim: 'Operational municipal effectiveness', status: 'DESIGNED', evidence: 'Explicitly not claimed; CITY//01 is a synthetic validation environment' },
+  { claim: 'Windows ARM64 native packaging', status: 'NOT IMPLEMENTED', evidence: 'Current deliverable is the verified Vite web build; no native Tauri/Rust package is shipped' },
+  { claim: 'Operational municipal effectiveness', status: 'NOT CLAIMED', evidence: 'CITY//01 is a synthetic validation environment; no municipal pilot evidence exists' },
 ];

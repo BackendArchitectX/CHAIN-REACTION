@@ -16,8 +16,8 @@ export function EdgeLabView({ mission }: { mission: Mission }) {
           label="NPU execution proof"
           value={mission.chaos.npuUnavailable
             ? 'UNAVAILABLE / EXPLICIT FALLBACK'
-            : capability.npuVerified
-              ? 'VERIFIED EXACT-DEVICE PROFILE'
+            : capability.profileAccepted
+              ? 'PROFILE ACCEPTED / NOT ATTESTED'
               : 'PENDING EXACT-DEVICE PROFILE'}
         />
         <EdgeMetric label="Cloud inference" value="0" />
@@ -25,20 +25,20 @@ export function EdgeLabView({ mission }: { mission: Mission }) {
         <EdgeMetric label="Simulation workload" value="Deterministic CPU" />
         <EdgeMetric label="Safety Kernel" value="Deterministic CPU" />
         <EdgeMetric label="Visualization" value="Browser GPU / compositor" />
-        <EdgeMetric label="NPU layer coverage" value={capability.npuCoveragePct != null ? `${capability.npuCoveragePct}%` : '—'} />
+        <EdgeMetric label="Reported NPU layer coverage" value={capability.npuCoveragePct != null ? `${capability.npuCoveragePct}%` : '—'} />
         <EdgeMetric
-          label="Warm latency P50/P95"
+          label="Reported warm latency P50/P95"
           value={capability.p50Ms != null ? `${capability.p50Ms} / ${capability.p95Ms} ms` : '—'}
         />
         <EdgeMetric
-          label="Cold load / memory"
+          label="Reported cold load / memory"
           value={capability.coldLoadMs != null ? `${capability.coldLoadMs} ms / ${capability.memoryMb} MB` : '—'}
         />
       </div>
 
       <div className="technical-note">
         <div>
-          <b>{capability.npuVerified ? 'HARDWARE PROOF VERIFIED' : 'LOAD EXACT-DEVICE QNN PROFILE'}</b>
+          <b>{capability.profileAccepted ? 'EVIDENCE PROFILE ACCEPTED — NOT ATTESTED' : 'LOAD EXACT-DEVICE QNN PROFILE'}</b>
           <span>{capability.proofReason}</span>
         </div>
         <label>
@@ -56,7 +56,7 @@ export function EdgeLabView({ mission }: { mission: Mission }) {
 
       <div className="technical-note">
         <b>NO FAKE NPU METRICS.</b>{' '}
-        The hardware gate is: compile → execute → profile on the exact Snapdragon-powered HP target → verify per-layer placement → then publish measured P50/P95, load time, memory, and NPU coverage.
+        Metrics are displayed only from a structurally valid loaded profile and are labeled as reported evidence. Browser-side profile acceptance does not independently attest the device, profiler, or execution provenance.
       </div>
     </section>
 

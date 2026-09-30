@@ -7,17 +7,17 @@ export type RuntimeTrust = {
   evidence: 'HIGH' | 'MEDIUM' | 'LOW';
   forecastFreshness: 'HIGH' | 'LOW';
   perception: 'HIGH' | 'MEDIUM';
-  hardware: 'VERIFIED' | 'UNVERIFIED' | 'DEGRADED';
+  hardware: 'PROFILE ACCEPTED' | 'UNVERIFIED' | 'DEGRADED';
   watchdog: string[];
 };
 
-export function deriveRuntimeTrust(input: { chaos: ChaosFlags; evidence: EvidenceDiagnostics; lease: LeaseResult; npuVerified: boolean }): RuntimeTrust {
+export function deriveRuntimeTrust(input: { chaos: ChaosFlags; evidence: EvidenceDiagnostics; lease: LeaseResult; hardwareEvidenceAccepted: boolean }): RuntimeTrust {
   const watchdog: string[] = [];
   let evidence: RuntimeTrust['evidence'] = 'HIGH';
   if (input.evidence.contradictions) evidence = 'LOW';
   else if (input.evidence.lateEvents || input.evidence.staleEvents || input.evidence.duplicates) evidence = 'MEDIUM';
   const perception: RuntimeTrust['perception'] = input.chaos.staleCamera ? 'MEDIUM' : 'HIGH';
-  const hardware: RuntimeTrust['hardware'] = input.chaos.npuUnavailable ? 'DEGRADED' : input.npuVerified ? 'VERIFIED' : 'UNVERIFIED';
+  const hardware: RuntimeTrust['hardware'] = input.chaos.npuUnavailable ? 'DEGRADED' : input.hardwareEvidenceAccepted ? 'PROFILE ACCEPTED' : 'UNVERIFIED';
   if (input.lease.status === 'EXPIRED') watchdog.push(`Forecast lease expired: ${input.lease.reason}`);
   if (evidence === 'LOW') watchdog.push('Evidence sources conflict; high-confidence planning should be withheld until replanning.');
   if (perception === 'MEDIUM') watchdog.push('Camera evidence is stale; perception trust is reduced.');
