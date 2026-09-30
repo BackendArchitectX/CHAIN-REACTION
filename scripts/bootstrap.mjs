@@ -29,11 +29,15 @@ function run(command, args, options = {}) {
 }
 
 function assertRuntime() {
-  const major = Number(process.versions.node.split('.')[0]);
-  if (major !== 22) fail(`Node.js 22 LTS is required. Detected ${process.version}.`);
+  const [major, minor] = process.versions.node.split('.').map(Number);
+  if (major !== 22 || minor < 12) {
+    fail(`Node.js >=22.12 <23 is required. Detected ${process.version}.`);
+  }
 
   const npmVersion = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
-  if (npmVersion.status !== 0) fail('npm was not found. Install Node.js 22 LTS with npm.');
+  if (npmVersion.status !== 0) fail('npm was not found. Install Node.js 22 LTS with npm 10+.');
+  const npmMajor = Number(npmVersion.stdout.trim().split('.')[0]);
+  if (!Number.isFinite(npmMajor) || npmMajor < 10) fail(`npm 10+ is required. Detected ${npmVersion.stdout.trim()}.`);
 }
 
 function dependencyFingerprint() {
@@ -58,11 +62,11 @@ function ensureDependencies() {
     return;
   }
 
-  console.log('[CHAIN//REACTION] Preparing deterministic development dependencies...');
+  console.log('[CHAIN//REACTION] Preparing project dependencies...');
   if (existsSync(packageLock)) {
     run(npmCommand, ['ci', '--no-fund']);
   } else {
-    console.warn('[CHAIN//REACTION] package-lock.json is not present yet; using npm install.');
+    console.warn('[CHAIN//REACTION] package-lock.json is not committed; using exact top-level versions with npm install.');
     run(npmCommand, ['install', '--no-fund']);
   }
 
