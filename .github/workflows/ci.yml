@@ -17,8 +17,13 @@ jobs:
         with:
           node-version: 22
       - run: npm install
-      - name: Emit deterministic lockfile capsule
-        run: node -e "const fs=require('fs'),z=require('zlib');console.log('LOCKFILE_GZIP_B64='+z.gzipSync(fs.readFileSync('package-lock.json')).toString('base64'))"
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-lockfile
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 1
       - name: Dependency security gate
         run: npm audit --audit-level=high
       - run: npm run verify
