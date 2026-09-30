@@ -1,0 +1,24 @@
+name: enforce-single-branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Keep main as the only branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/${{ github.repository }}/branches --paginate --jq '.[].name' \
+            | grep -v '^main$' \
+            | while read -r branch; do
+                encoded=$(printf '%s' "$branch" | sed 's#/#%2F#g')
+                gh api --method DELETE "repos/${{ github.repository }}/git/refs/heads/$encoded"
+              done
