@@ -2,96 +2,174 @@
 
 **Edge Causal Resilience Intelligence for Snapdragon-powered PCs.**
 
-CHAIN//REACTION is a premium competition MVP for the Snapdragon AI Lab Build & Present Challenge. It models a synthetic critical-infrastructure environment (CITY//01), visualizes cascading failure risk, compares counterfactual intervention branches, and keeps an explicit boundary between observed evidence, assumptions, and predictions.
+> **Observe uncertainty. Fork the future. Preserve the critical.**
 
-> **What may fail next? How long is intervention still possible? Which plan remains viable when assumptions change?**
+CHAIN//REACTION is a competition-grade resilience decision-support prototype for the Snapdragon AI Lab Build & Present Challenge. It combines an explicit synthetic infrastructure world model with deterministic simulation, robust counterfactual planning, evidence provenance, decision-time analysis, and a strict hardware-assurance boundary for future Snapdragon NPU perception.
 
-## Experience
+The current environment is **CITY//01**, a synthetic infrastructure network. It is intentionally labelled as simulation: the repository validates architecture, algorithms, reproducibility, safety behavior, and user experience; it does **not** claim municipal operational effectiveness.
 
-The current MVP includes:
+## What makes it different
 
-- **Living Causal Twin** — power, telecom, healthcare, water, transport, and emergency-service topology
-- **Evidence Fabric** — structured evidence with confidence, freshness, and trust
-- **Cascade Window** — estimated interval in which downstream service risk emerges
-- **Decision Horizon** — remaining time for a simulated intervention to become effective
-- **Forecast Lease** — makes stale predictions visibly expire
-- **Reality Forks** — synchronized intervention alternatives with robustness and recovery debt
-- **Safety Kernel surface** — deterministic pass/reject boundary for simulated plans
-- **Plan invalidation** — new road-block evidence invalidates prior assumptions
-- **Chaos Lab** — failure-injection and robustness coverage
-- **Edge Lab** — Snapdragon deployment contract without pretending NPU execution is already proven
-- **Audit** — Observed / Assumed / Predicted trace vocabulary
+- **Living Causal Twin** — explicit power, telecom, healthcare, water, transport, and emergency dependencies.
+- **Evidence Fabric** — observations have confidence, freshness, trust, event time, and provenance.
+- **Future Shadow / Reality Forks** — synchronized counterfactual worlds from the same snapshot.
+- **Common-randomness evaluation** — every intervention is tested against the same sampled future uncertainty.
+- **Resilience Envelope** — robustness is measured across hundreds of plausible futures, not one scripted path.
+- **Decision Horizon** — shows how long an intervention can still become effective after lead time and safety margin.
+- **Next Best Observation** — sensitivity analysis identifies which missing measurement most affects the decision.
+- **Safety Kernel** — deterministic hard constraints can reject infeasible or unsafe simulated plans.
+- **Forecast Lease** — stale branch results expire when materially new evidence changes the world model.
+- **Recovery Debt** — short-term success does not hide a fragile post-incident state.
+- **Audit & Replay** — the run exports a reproducibility capsule containing seed, evidence, plans, revisions, and traces.
+- **Edge Lab** — Snapdragon claims remain `PENDING HARDWARE` until exact-device compile, execution, and layer-placement evidence exists.
 
-## Run immediately
+## Flagship scenario — MONSOON ZERO
 
-Open `demo.html` directly in a modern browser. It is a standalone zero-install build intended for judging and fallback demos.
+A 420-second deterministic CITY//01 incident:
 
-## Run the React/TypeScript project
+1. flood-like evidence appears near `SUBSTATION_03`;
+2. sensor and grid evidence corroborate the incident;
+3. degradation propagates into telecom, water, emergency response, and hospital dependencies;
+4. Reality Forks compare four intervention strategies;
+5. 256 paired futures stress each strategy under shared uncertainty;
+6. `ROAD_12` can block before a mobile telecom unit arrives, invalidating the prior plan;
+7. the Forecast Lease expires and Live Replanning is required;
+8. a second telecom-load shock can test recovery debt.
 
-```powershell
-npm install
-npm run dev
-```
+Fixed scenario seed: **271828**.
 
-Or on Windows:
+## Run
+
+### Windows one-command
 
 ```powershell
 .\run.ps1
 ```
 
-Production build:
+### Standard
 
-```powershell
-npm run build
+```bash
+npm install
+npm run dev
 ```
 
-## MONSOON ZERO
+Then open the Vite URL shown in the terminal.
 
-The flagship scenario begins with a nominal CITY//01 world, confirms flood evidence near `SUBSTATION_03`, propagates downstream telecom and hospital risk, compares intervention branches, and then injects a `ROAD_12` blockage that invalidates a previously viable plan.
+### Verify
 
-The scenario is deliberately synthetic. It validates the product architecture, simulation interaction, audit vocabulary, and decision-support UX; it does **not** claim operational validation on real municipal infrastructure.
+```bash
+npm run verify
+```
 
-## Snapdragon integration boundary
+This performs strict TypeScript checking, deterministic/metamorphic tests, and a production build.
 
-The MVP intentionally does **not** display fake Snapdragon NPU metrics. The production challenge build should:
-
-1. Export the selected perception model to ONNX.
-2. Compile/profile the model for the exact Snapdragon-powered HP target using Qualcomm tooling.
-3. Execute through ONNX Runtime + QNN where supported.
-4. Verify actual per-layer accelerator placement rather than assuming QNN implies NPU execution.
-5. Replace Edge Lab placeholders only with measured results from the target device.
-
-## Architecture direction
+## Architecture
 
 ```text
-Input / Evidence
-      |
-      v
-Evidence Fabric
-      |
-      v
-Living Causal Twin
-      |
-      v
-Future / Counterfactual Simulation
-      |
-      v
-Safety Kernel
-      |
-      v
-Human Decision
+Camera / Sensor / Replay / Operator
+                |
+                v
+         Evidence Fabric
+                |
+                v
+       Living Causal Twin
+                |
+      +---------+----------+
+      |                    |
+      v                    v
+ Twin Consistency     Assumption Model
+      |                    |
+      +---------+----------+
+                v
+          Future Compiler
+                |
+                v
+        Resilience Envelope
+                |
+      +---------+----------+
+      |                    |
+      v                    v
+ Reality Forks       Decision Horizon
+      |                    |
+      +---------+----------+
+                v
+             Planner
+                |
+                v
+         Safety Kernel
+                |
+                v
+              Human
 ```
 
-Edge inference is intended for the Snapdragon NPU; causal simulation and safety logic remain deterministic CPU workloads, while the GPU renders the interactive topology.
+### Heterogeneous compute intent
 
-## Repository principles
+- **Snapdragon NPU:** perception/classification/detection after exact-device validation.
+- **CPU:** Evidence Fabric, world model, uncertainty sampling, counterfactual simulation, Safety Kernel, audit.
+- **GPU/compositor:** topology and future visualization.
 
-- no paid cloud AI API dependency
-- no autonomous real-world infrastructure actuation
-- no fabricated benchmark numbers
-- no hidden co-author attribution
-- deterministic/synthetic demonstration boundary is explicit
+The simulation is **not** presented as an NPU workload.
 
-## Project ownership
+## Snapdragon integration gate
+
+The repository deliberately does not fake Snapdragon metrics. Before publishing NPU claims, the final hardware build must:
+
+1. detect the exact Snapdragon-powered HP target;
+2. export/fine-tune the chosen perception model;
+3. compile and profile it for that exact target;
+4. execute through a supported ONNX Runtime/QNN path;
+5. verify actual per-layer accelerator placement;
+6. record cold load, first inference, warm P50/P95, memory, and NPU layer coverage;
+7. bind those numbers to a versioned model manifest.
+
+See [`docs/SNAPDRAGON_INTEGRATION.md`](docs/SNAPDRAGON_INTEGRATION.md).
+
+## Assurance
+
+The repository treats claims as things that require evidence.
+
+- deterministic replay → repository tests;
+- common-randomness forks → shared future samples;
+- unsafe/infeasible plans → deterministic constraints and tests;
+- offline simulation core → no cloud AI dependency;
+- NPU execution → **pending exact-device hardware proof**;
+- real municipal effectiveness → **not claimed**.
+
+See [`docs/ASSURANCE_CASE.md`](docs/ASSURANCE_CASE.md) and [`docs/SAFETY_AND_LIMITATIONS.md`](docs/SAFETY_AND_LIMITATIONS.md).
+
+## Commands
+
+```bash
+npm run dev
+npm run typecheck
+npm run test
+npm run verify
+npm run build
+npm run preview
+```
+
+## Repository structure
+
+```text
+src/
+  core/         simulation, planning, assurance, deterministic RNG
+  data/         CITY//01 world and intervention definitions
+  edge/         hardware capability boundary
+  main.tsx      premium mission-control experience
+  styles.css
+
+tests/          deterministic + metamorphic assurance tests
+docs/           assurance, safety, Snapdragon integration, scenario spec
+public/         hardware/model manifest template
+.github/        CI + Pages workflows
+```
+
+## Safety boundary
+
+CHAIN//REACTION does **not** autonomously control critical infrastructure. In the competition build:
+
+> **Machine perception observes. Causal simulation forecasts. The Safety Kernel verifies. Humans decide.**
+
+## Ownership
 
 Maintained as a single-author competition project by **BackendArchitectX**.
