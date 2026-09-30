@@ -52,6 +52,7 @@ if (!existsSync(packageLockPath)) {
     lint: 'node ./scripts/quality.mjs',
     smoke: 'node ./scripts/smoke.mjs',
     sbom: 'node ./scripts/sbom.mjs',
+    reproducibility: 'node ./scripts/reproducibility.mjs',
   };
   for (const [name, expected] of Object.entries(requiredScripts)) {
     if (pkg.scripts?.[name] !== expected) fail('script-contract', `package.json:scripts.${name}`, `Expected "${expected}".`);
@@ -59,8 +60,8 @@ if (!existsSync(packageLockPath)) {
   if (!pkg.scripts?.build?.includes('build-manifest.mjs')) {
     fail('artifact-manifest', 'package.json:scripts.build', 'Production build must emit the SHA-256 build manifest.');
   }
-  if (!pkg.scripts?.verify?.includes('npm run smoke') || !pkg.scripts?.verify?.includes('npm run sbom')) {
-    fail('release-gate', 'package.json:scripts.verify', 'Verification must include smoke and SBOM gates.');
+  if (!pkg.scripts?.verify?.includes('npm run smoke') || !pkg.scripts?.verify?.includes('npm run sbom') || !pkg.scripts?.verify?.includes('npm run reproducibility')) {
+    fail('release-gate', 'package.json:scripts.verify', 'Verification must include reproducibility, smoke, and SBOM gates.');
   }
 
   for (const [group, dependencies] of Object.entries({ dependencies: pkg.dependencies ?? {}, devDependencies: pkg.devDependencies ?? {} })) {
@@ -120,6 +121,20 @@ if (existsSync(indexPath)) {
   const html = readFileSync(indexPath, 'utf8');
   if (!html.includes('Content-Security-Policy')) fail('html-security', 'index.html', 'Content Security Policy metadata is required.');
   if (!html.includes('name="referrer"')) fail('html-security', 'index.html', 'Referrer policy metadata is required.');
+}
+
+const workflowRoot = join(root, '.github', 'workflows');
+if (existsSync(workflowRoot)) {
+  for (const workflow of walk(workflowRoot).filter(path => /\.ya?ml$/.test(path))) {
+    const path = projectPath(workflow);
+    const content = readFileSync(workflow, 'utf8');
+    for (const match of content.matchAll(/uses:\s*([^\s]+)@([^\s#]+)/g)) {
+      const reference = match[2];
+      if (!/^[0-9a-f]{40}$/i.test(reference)) {
+        fail('action-pin', path, `External GitHub Action must be pinned to a 40-character commit SHA: ${match[0]}`);
+      }
+    }
+  }
 }
 
 if (existsSync(join(root, 'demo.html'))) fail('single-entrypoint', 'demo.html', 'Legacy duplicate application entry point must stay removed.');

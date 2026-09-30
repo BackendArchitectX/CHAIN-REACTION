@@ -37,6 +37,7 @@ npm run lint       # zero-dependency repository and layer quality gate
 npm run typecheck  # strict TypeScript validation for src + tests
 npm test           # deterministic assurance suite
 npm run build      # typecheck + production build + SHA-256 manifest
+npm run reproducibility # require identical manifests from consecutive builds
 npm run smoke      # validate production references, hashes, and bundle budgets
 npm run sbom       # generate CycloneDX SBOM
 npm run verify     # complete local release-quality gate

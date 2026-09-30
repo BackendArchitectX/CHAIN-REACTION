@@ -44,6 +44,7 @@ const requiredPaths = [
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
   ['scripts/smoke.mjs', 'production smoke gate'],
   ['scripts/sbom.mjs', 'CycloneDX SBOM generator'],
+  ['scripts/reproducibility.mjs', 'reproducible-build gate'],
   ['docs/SUPPLY_CHAIN.md', 'software supply-chain contract'],
   ['docs/adr/0001-main-only-trunk.md', 'main-only trunk ADR'],
   ['docs/adr/0002-deterministic-core.md', 'deterministic core ADR'],
@@ -67,6 +68,7 @@ if (existsSync(packagePath)) {
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
   record('Smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
   record('SBOM gate wired', pkg.scripts?.sbom === 'node ./scripts/sbom.mjs', pkg.scripts?.sbom ?? 'missing');
+  record('Reproducibility gate wired', pkg.scripts?.reproducibility === 'node ./scripts/reproducibility.mjs', pkg.scripts?.reproducibility ?? 'missing');
   record('Artifact manifest wired', pkg.scripts?.build?.includes('build-manifest.mjs') === true, pkg.scripts?.build ?? 'missing');
 
   if (existsSync(lockPath)) {

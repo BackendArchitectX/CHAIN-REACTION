@@ -18,6 +18,10 @@ All notable repository-level changes are documented here.
 - Added static bundle budgets and disabled production source maps.
 - Added hardened HTML metadata including CSP and no-referrer policy.
 - Added Architecture Decision Records for main-only trunk development and deterministic core boundaries.
+- Pinned every external GitHub Action to an immutable commit SHA.
+- Added CodeQL JavaScript/TypeScript static analysis on main plus weekly scheduled scanning.
+- Added a consecutive-build reproducibility gate for production artifact manifests.
+- Hardened one-step bootstrap with a top-level npm dependency-tree health check before reusing node_modules.
 
 ## 0.4.0 — Industry lifecycle and architecture hardening
 

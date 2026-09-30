@@ -21,9 +21,10 @@
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "doctor": "node ./scripts/doctor.mjs",
     "clean": "node ./scripts/clean.mjs",
-    "verify": "npm run doctor && npm run lint && npm run test && npm run build && npm run smoke && npm run sbom",
+    "verify": "npm run doctor && npm run lint && npm run test && npm run build && npm run reproducibility && npm run smoke && npm run sbom",
     "smoke": "node ./scripts/smoke.mjs",
-    "sbom": "node ./scripts/sbom.mjs"
+    "sbom": "node ./scripts/sbom.mjs",
+    "reproducibility": "node ./scripts/reproducibility.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

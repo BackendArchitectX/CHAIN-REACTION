@@ -9,4 +9,5 @@ where npm >nul 2>nul || (
   echo [CHAIN//REACTION] npm is required.
   exit /b 1
 )
-npm start
+call npm start
+exit /b %errorlevel%

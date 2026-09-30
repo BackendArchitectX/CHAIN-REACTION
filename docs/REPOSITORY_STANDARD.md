@@ -55,9 +55,11 @@ Every completed change must pass:
 3. TypeScript compile validation for source and tests.
 4. Deterministic automated tests.
 5. Production build with deterministic SHA-256 artifact manifest.
-6. Production smoke validation and static bundle budgets.
-7. CycloneDX SBOM generation.
-8. High/critical dependency audit in CI.
+6. Consecutive-build reproducibility verification.
+7. Production smoke validation and static bundle budgets.
+8. CycloneDX SBOM generation.
+9. High/critical dependency audit in CI.
+10. CodeQL JavaScript/TypeScript static security analysis.
 
 ## Commit identity
 
@@ -66,3 +68,7 @@ The competition repository is maintained by `BackendArchitectX`. Do not add co-a
 ## Production artifact standard
 
 A release-quality build must emit a SHA-256 build manifest and CycloneDX SBOM. Production verification rejects missing referenced assets, hash mismatches, source-map emission, and unexpected bundle-size growth. These controls validate software artifact integrity only; Snapdragon NPU execution remains governed by the independent exact-device hardware-proof boundary.
+
+## Workflow supply-chain standard
+
+External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating action tags. Human-readable comments retain the intended major release beside each pinned SHA.

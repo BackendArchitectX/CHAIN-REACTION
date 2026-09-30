@@ -56,7 +56,15 @@ function dependencyFingerprint() {
 function ensureDependencies() {
   const fingerprint = dependencyFingerprint();
   const previous = existsSync(stampFile) ? readFileSync(stampFile, 'utf8').trim() : '';
-  const dependenciesReady = [viteBinary, reactPackage, reactDomPackage].every(existsSync) && previous === fingerprint;
+  const filesReady = [viteBinary, reactPackage, reactDomPackage].every(existsSync);
+  const dependencyTree = filesReady && previous === fingerprint
+    ? spawnSync(npmCommand, ['ls', '--depth=0', '--silent'], {
+        cwd: projectRoot,
+        stdio: 'ignore',
+        shell: false,
+      })
+    : null;
+  const dependenciesReady = filesReady && previous === fingerprint && dependencyTree?.status === 0;
 
   if (process.env.CHAIN_REACTION_SKIP_INSTALL === '1') {
     if (!dependenciesReady) fail('Dependencies are missing or stale and CHAIN_REACTION_SKIP_INSTALL=1 is set.');
