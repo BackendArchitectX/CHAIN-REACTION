@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Plan resource requirements are now enforced generically, resource costs are applied only when an intervention actually activates, and checkpoint/final resource state stays consistent.
+- Added regression coverage for resource shortfalls, blocked pre-activation mobile deployment, and activation-time resource accounting.
 - Hardened the browser-global architecture gate so it detects executable global references without falsely rejecting ordinary domain text that happens to contain words such as "window".
 - Centralized intervention commit eligibility in the deterministic decision domain so stale forecasts, Safety Kernel rejections, and missed intervention windows cannot drift between UI and application logic.
 - Added deterministic tests for commit eligibility and exposed blocked-action reasons through an accessible status message.

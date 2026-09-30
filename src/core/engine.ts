@@ -48,6 +48,27 @@ function cloneNodes(nodes: Record<string, NodeRuntime>) {
   return Object.fromEntries(Object.entries(nodes).map(([id, node]) => [id, { ...node }]));
 }
 
+function planResourceIssue(plan: PlanId, resources: ResourceState): string | undefined {
+  const meta = PLANS[plan];
+  if (resources.gridReservePct < meta.gridReserveCost) {
+    return `Insufficient grid reserve: requires ${meta.gridReserveCost}% but only ${resources.gridReservePct}% is available.`;
+  }
+  if (resources.mobileUnits < meta.mobileUnitsRequired) {
+    return `Insufficient mobile units: requires ${meta.mobileUnitsRequired} but only ${resources.mobileUnits} is available.`;
+  }
+  if (resources.generators < meta.generatorsRequired) {
+    return `Insufficient generators: requires ${meta.generatorsRequired} but only ${resources.generators} is available.`;
+  }
+  return undefined;
+}
+
+function commitPlanResources(plan: PlanId, resources: ResourceState) {
+  const meta = PLANS[plan];
+  resources.gridReservePct = Math.max(0, resources.gridReservePct - meta.gridReserveCost);
+  resources.mobileUnits = Math.max(0, resources.mobileUnits - meta.mobileUnitsRequired);
+  resources.generators = Math.max(0, resources.generators - meta.generatorsRequired);
+}
+
 export function evidenceAt(time: number, chaos: ChaosFlags, parameters: WorldParameters): EvidenceEvent[] {
   const events: EvidenceEvent[] = [];
   if (time >= 8) {
@@ -98,8 +119,10 @@ export function simulate(options: SimulationOptions): SimulationRun {
   const trace: TraceEvent[] = [];
   const checkpoints: WorldSnapshot[] = [];
   const activation = planActivationTime(plan, interventionCommitSec, parameters);
-  let planFeasible = true;
-  let planInfeasibleReason: string | undefined;
+  const initialResourceIssue = planResourceIssue(plan, resources);
+  let planFeasible = initialResourceIssue == null;
+  let planInfeasibleReason = initialResourceIssue;
+  let resourcesCommitted = false;
   let firstCriticalImpactSec: number | null = null;
   let firstFailureSec: number | null = null;
   let recoverySec: number | null = null;
@@ -114,21 +137,22 @@ export function simulate(options: SimulationOptions): SimulationRun {
     const rerouteRequested = plan === 'REROUTE' || plan === 'REROUTE_MOBILE';
     const shedRequested = plan === 'SHED_LOAD';
     const mobileRequested = plan === 'REROUTE_MOBILE';
-    const gridReserveSufficient = !rerouteRequested || parameters.gridSparePct >= PLANS[plan].gridReserveCost;
     const mobileRouteBlocked = chaos.roadBlocked && 74 <= activation;
 
     if (mobileRequested && mobileRouteBlocked && t >= 74) {
       planFeasible = false;
       planInfeasibleReason = 'Mobile Unit 01 cannot reach Telecom 07 because ROAD_12 is blocked before activation.';
     }
-    if (!gridReserveSufficient) {
-      planFeasible = false;
-      planInfeasibleReason = 'Insufficient grid reserve for requested reroute.';
+
+    if (plan !== 'NO_ACTION' && !resourcesCommitted && planFeasible && t >= activation) {
+      commitPlanResources(plan, resources);
+      resourcesCommitted = true;
     }
 
-    const rerouteActive = rerouteRequested && gridReserveSufficient && t >= interventionCommitSec + PLANS.REROUTE.leadTimeSec;
-    const shedActive = shedRequested && t >= activation;
-    const mobileActive = mobileRequested && gridReserveSufficient && t >= activation && !mobileRouteBlocked && resources.mobileUnits > 0;
+    const interventionActive = plan !== 'NO_ACTION' && resourcesCommitted;
+    const rerouteActive = rerouteRequested && interventionActive;
+    const shedActive = shedRequested && interventionActive;
+    const mobileActive = mobileRequested && interventionActive && !mobileRouteBlocked;
 
     let subTarget = 100 - flood * 74;
     if (chaos.secondShock && t >= 185) subTarget -= 10;
@@ -191,18 +215,15 @@ export function simulate(options: SimulationOptions): SimulationRun {
     if (t % 15 === 0 || t === untilSec) {
       checkpoints.push({
         time: t, nodes: cloneNodes(nodes), resources: { ...resources }, activePlan: plan,
-        planActivated: t >= activation, planActivationTime: activation, planFeasible, planInfeasibleReason,
+        planActivated: plan === 'NO_ACTION' ? true : resourcesCommitted, planActivationTime: activation, planFeasible, planInfeasibleReason,
         observations: evidenceAt(t, chaos, parameters), trace: [...trace],
       });
     }
   }
 
-  if ((plan === 'REROUTE' || plan === 'REROUTE_MOBILE') && planFeasible) resources.gridReservePct = Math.max(0, resources.gridReservePct - PLANS[plan].gridReserveCost);
-  if (plan === 'REROUTE_MOBILE' && planFeasible) resources.mobileUnits = 0;
-
   const final: WorldSnapshot = {
     time: untilSec, nodes: cloneNodes(nodes), resources: { ...resources }, activePlan: plan,
-    planActivated: untilSec >= activation, planActivationTime: activation, planFeasible, planInfeasibleReason,
+    planActivated: plan === 'NO_ACTION' ? true : resourcesCommitted, planActivationTime: activation, planFeasible, planInfeasibleReason,
     observations: evidenceAt(untilSec, chaos, parameters), trace,
   };
   const critical = NODES.filter(n => n.critical).map(n => final.nodes[n.id]);

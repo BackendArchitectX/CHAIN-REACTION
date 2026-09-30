@@ -7,6 +7,7 @@ CHAIN//REACTION separates product claims from evidence. Competition screenshots 
 | Same scenario + seed is reproducible | deterministic engine tests | Proven in repository tests |
 | Reality Forks are paired fairly | common-randomness sample generator | Proven in code/tests |
 | Unsafe plans are rejected | deterministic Safety Kernel invariants | Proven in code/tests |
+| Intervention resource prerequisites are fail-closed | activation/resource accounting invariants | Proven in engine tests |
 | Core runtime does not require cloud AI | network-independent simulation | Proven by architecture |
 | NPU actually executes the model | exact-device QNN layer-placement profile | Pending Snapdragon HP hardware |
 | Model latency / memory | exact-device Workbench/QNN benchmark | Pending hardware |
