@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Centralized intervention commit eligibility in the deterministic decision domain so stale forecasts, Safety Kernel rejections, and missed intervention windows cannot drift between UI and application logic.
+- Added deterministic tests for commit eligibility and exposed blocked-action reasons through an accessible status message.
 - Switched the application to a premium light mission-control theme with high-contrast surfaces, state-aware accents, and matching browser theme metadata.
 - Replaced raw UI error-message rendering with generic safe recovery copy while retaining developer diagnostics in the console.
 - Prevented intervention commits after a missed decision horizon and exposed an explicit disabled-state reason.

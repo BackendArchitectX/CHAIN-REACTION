@@ -6,7 +6,7 @@ import { analyzeEvidence, normalizeEvidence } from '../core/evidence';
 import { evaluateForecastLease } from '../core/leases';
 import { traceFingerprint } from '../core/integrity';
 import { deriveRuntimeTrust } from '../core/runtime';
-import { decisionStability, informationValue } from '../core/decision';
+import { decisionStability, evaluateCommitEligibility, informationValue } from '../core/decision';
 import { detectEdgeCapability, validateHardwareProof } from '../edge/capabilities';
 import type { ChaosFlags, PlanId } from '../core/types';
 import type { AppTab, AuditEntry } from './types';
@@ -115,6 +115,7 @@ export function useMission() {
     npuVerified: edgeCapability.npuVerified,
   });
   const trust = runtimeTrust.state;
+  const commitEligibility = evaluateCommitEligibility(lease, selectedEvaluation);
   const stability = decisionStability(selectedEvaluation, evaluations, sensitivity);
   const nextObservationValue = informationValue(sensitivity[0]);
 
@@ -179,12 +180,8 @@ export function useMission() {
   };
 
   const commitPlan = () => {
-    if (lease !== 'ACTIVE') {
-      appendAudit('system', 'Plan selection blocked because forecast lease is expired.', 'SK-LEASE');
-      return;
-    }
-    if (selectedEvaluation.safety === 'REJECT' || selectedEvaluation.decisionMargin === 'MISSED') {
-      appendAudit('system', `Safety Kernel rejected ${PLANS[selectedPlan].name}.`, 'SK-REJECT');
+    if (!commitEligibility.allowed) {
+      appendAudit('system', commitEligibility.message, commitEligibility.auditRef);
       return;
     }
     setActivePlan(selectedPlan);
@@ -279,6 +276,7 @@ export function useMission() {
     trust,
     runtimeTrust,
     stability,
+    commitEligibility,
     nextObservationValue,
     cascadeEarliest,
     cascadeLatest,

@@ -4,7 +4,7 @@
 
 > **Observe uncertainty. Fork the future. Preserve the critical.**
 
-CHAIN//REACTION is a local-first resilience decision-support prototype for the Snapdragon AI Lab Build & Present Challenge. It combines a deterministic synthetic infrastructure world model, evidence-aware incident reasoning, paired counterfactual planning, an independent Safety Kernel, and an exact-device hardware-proof boundary for future Snapdragon NPU perception.
+CHAIN//REACTION is a local-first resilience decision-support system built for the Snapdragon AI Lab Build & Present Challenge. It combines a deterministic synthetic infrastructure world model, evidence-aware incident reasoning, paired counterfactual planning, an independent Safety Kernel, and an exact-device hardware-proof boundary for future Snapdragon NPU perception.
 
 The current environment is **CITY//01**, a synthetic infrastructure network. It validates software architecture, deterministic behavior, safety logic, reproducibility, assurance workflows, and user experience. It does **not** claim operational municipal validation.
 

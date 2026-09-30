@@ -1,3 +1,4 @@
+import type { LeaseStatus } from './leases';
 import type { PlanEvaluation, SensitivityItem } from './types';
 
 export type DecisionStability = {
@@ -26,4 +27,48 @@ export function informationValue(item: SensitivityItem | undefined) {
   if (!item) return { score: 0, band: 'LOW' as const };
   const score = Math.min(100, Math.round(item.score * 3));
   return { score, band: score >= 60 ? 'HIGH' as const : score >= 25 ? 'MEDIUM' as const : 'LOW' as const };
+}
+
+
+export type CommitEligibility =
+  | { allowed: true; code: 'READY'; message: null; auditRef: null }
+  | {
+      allowed: false;
+      code: 'FORECAST_EXPIRED' | 'SAFETY_REJECTED' | 'DECISION_WINDOW_MISSED';
+      message: string;
+      auditRef: string;
+    };
+
+export function evaluateCommitEligibility(
+  lease: LeaseStatus,
+  evaluation: Pick<PlanEvaluation, 'safety' | 'decisionMargin'>,
+): CommitEligibility {
+  if (lease !== 'ACTIVE') {
+    return {
+      allowed: false,
+      code: 'FORECAST_EXPIRED',
+      message: 'Replan before committing because the forecast lease has expired.',
+      auditRef: 'SK-LEASE',
+    };
+  }
+
+  if (evaluation.safety === 'REJECT') {
+    return {
+      allowed: false,
+      code: 'SAFETY_REJECTED',
+      message: 'The Safety Kernel rejected this intervention.',
+      auditRef: 'SK-REJECT',
+    };
+  }
+
+  if (evaluation.decisionMargin === 'MISSED') {
+    return {
+      allowed: false,
+      code: 'DECISION_WINDOW_MISSED',
+      message: 'The intervention window has already been missed.',
+      auditRef: 'SK-HORIZON',
+    };
+  }
+
+  return { allowed: true, code: 'READY', message: null, auditRef: null };
 }

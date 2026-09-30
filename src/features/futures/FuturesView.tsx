@@ -15,13 +15,9 @@ export function FuturesView({ mission }: { mission: Mission }) {
   const preventionRate = mission.prevention.atRiskWithout === 0
     ? 0
     : Math.round((mission.prevention.prevented / mission.prevention.atRiskWithout) * 100);
-  const commitBlockedReason = mission.lease === 'EXPIRED'
-    ? 'Replan before committing because the forecast lease has expired.'
-    : selectedEvaluation.safety === 'REJECT'
-      ? 'The Safety Kernel rejected this intervention.'
-      : selectedEvaluation.decisionMargin === 'MISSED'
-        ? 'The intervention window has already been missed.'
-        : null;
+  const commitBlockedReason = mission.commitEligibility.allowed
+    ? null
+    : mission.commitEligibility.message;
 
   return <main className="stack">
     {mission.lease === 'EXPIRED' && (
@@ -107,13 +103,13 @@ export function FuturesView({ mission }: { mission: Mission }) {
       <div className="action-row">
         <button
           onClick={mission.commitPlan}
-          disabled={commitBlockedReason != null}
+          disabled={!mission.commitEligibility.allowed}
           aria-describedby={commitBlockedReason ? 'commit-blocked-reason' : undefined}
         >
           COMMIT TO SIMULATION
         </button>
         <button className="secondary" onClick={() => mission.setTab('COMMAND')}>RETURN TO COMMAND</button>
-        {commitBlockedReason && <span id="commit-blocked-reason" className="muted-label">{commitBlockedReason}</span>}
+        {commitBlockedReason && <span id="commit-blocked-reason" className="muted-label" role="status">{commitBlockedReason}</span>}
       </div>
     </section>
   </main>;
