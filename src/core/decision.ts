@@ -65,7 +65,7 @@ export function evaluateCommitEligibility(
     return {
       allowed: false,
       code: 'DECISION_WINDOW_MISSED',
-      message: 'The intervention window has already been missed.',
+      message: 'The intervention decision horizon has already been missed.',
       auditRef: 'SK-HORIZON',
     };
   }
