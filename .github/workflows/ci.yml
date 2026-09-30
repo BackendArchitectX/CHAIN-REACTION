@@ -44,6 +44,7 @@ jobs:
         with:
           name: chain-reaction-assurance-linux
           path: |
+            dist/THIRD_PARTY_LICENSES.txt
             dist/build-manifest.json
             dist/sbom.cdx.json
           if-no-files-found: error
