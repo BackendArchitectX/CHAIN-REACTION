@@ -68,3 +68,16 @@ npm start
 ```
 
 `clean` removes generated build/cache output, not source files or committed proof/scenario artifacts.
+
+
+## Shutdown
+
+The development server runs in the foreground. Stop it with `Ctrl+C` in the terminal that launched it. No database, cache, broker, or backend process remains to be stopped separately.
+
+The production HTTP smoke test owns and terminates its preview child process automatically.
+
+## Rollback
+
+For a bad static application revision, preserve history: revert the offending commit on `main`, run `npm run verify`, push the verified revert, and manually redeploy GitHub Pages if needed.
+
+See `docs/RELEASE.md` for the complete release and rollback procedure.

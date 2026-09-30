@@ -8,6 +8,12 @@ CHAIN//REACTION is a local-first resilience decision-support prototype for the S
 
 The current environment is **CITY//01**, a synthetic infrastructure network. It validates software architecture, deterministic behavior, safety logic, reproducibility, assurance workflows, and user experience. It does **not** claim operational municipal validation.
 
+## Problem statement
+
+Infrastructure failures can cascade across power, telecom, transport, water, healthcare, and emergency-response systems. CHAIN//REACTION models those dependencies so a human operator can compare interventions, inspect uncertainty, and understand simulated downstream consequences before acting.
+
+The current product is decision-support software for a synthetic environment. It is designed for challenge reviewers, resilience analysts, and engineers evaluating deterministic causal simulation and edge-AI proof boundaries.
+
 ## One-step start
 
 ### Windows
@@ -158,6 +164,7 @@ CHAIN-REACTION/
 │   ├── ACCESSIBILITY.md
 │   ├── DEVELOPMENT.md
 │   ├── OPERATIONS.md
+│   ├── RELEASE.md
 │   ├── REPOSITORY_STANDARD.md
 │   ├── SYSTEM_BOUNDARIES.md
 │   ├── TESTING.md
@@ -195,6 +202,7 @@ CHAIN-REACTION/
 │   ├── ui/
 │   └── main.tsx
 ├── tests/
+├── .env.example
 ├── start.cmd
 ├── start.sh
 ├── run.ps1
@@ -278,6 +286,78 @@ EDGE LAB requires an exact-device `chainreaction.qnn-proof.v1` profile with:
 - valid verification timestamp.
 
 Untrusted proof input is schema-checked and bounded before metrics are accepted. Invalid proof data never surfaces as verified accelerator metrics.
+
+## Configuration
+
+No user-provided environment variables are required for normal startup. The committed `.env.example` documents that fact and shows the two CI/internal launcher flags without requiring developers to copy or edit it.
+
+CI may use `CHAIN_REACTION_PREFLIGHT_ONLY=1` and `CHAIN_REACTION_SKIP_INSTALL=1` to verify launchers without starting a persistent dev server. Normal users do not need either variable.
+
+## Running and shutdown
+
+Development URL:
+
+```text
+http://127.0.0.1:5173
+```
+
+Production preview:
+
+```bash
+npm run build
+npm run preview
+```
+
+Preview URL:
+
+```text
+http://127.0.0.1:4173
+```
+
+For terminal-started processes, press `Ctrl+C` to stop the foreground server. The current architecture starts no separate database, cache, broker, or backend service.
+
+## API, database, and realtime boundaries
+
+The current product has no backend HTTP API and no production database. Mission state is browser-process state, while scenarios and hardware-proof templates are version-controlled assets.
+
+The mission clock and topology propagation are deterministic in-process simulation behavior. They are not remote realtime telemetry and are not presented as WebSocket/SSE data. The dependency network reflects the actual current simulation state.
+
+## Observability
+
+Observability is proportional to the local architecture:
+
+- startup and verification diagnostics in the terminal;
+- mission status information in the UI;
+- deterministic audit entries for observed/system events;
+- build-manifest and SBOM evidence;
+- CI job history and CodeQL results.
+
+There are no server liveness/readiness endpoints, request metrics, distributed traces, or correlation IDs because there is no backend service.
+
+## Troubleshooting
+
+| Symptom | Likely cause | Action |
+| --- | --- | --- |
+| Runtime validation fails | Node.js/npm is missing or unsupported | Install Node.js 22 LTS with npm 10.x |
+| Lockfile error | `package-lock.json` is missing or inconsistent | Restore it from `main` |
+| Dependency restore fails | Registry/network/package issue | Restore network access and rerun the same launcher |
+| Port 5173 is occupied | Another process owns the strict dev port | Stop the conflicting process and retry |
+| Repository audit fails | Tracked junk, conflict/debt marker, or credential-like content | Resolve the exact reported finding |
+| Hardware proof is rejected | Exact-device QNN evidence is invalid/incomplete | Correct the proof; do not substitute synthetic metrics |
+| Production smoke fails | Artifact is missing, mutated, or over budget | Rebuild and inspect the reported artifact |
+
+See `docs/OPERATIONS.md` for the runbook and `docs/RELEASE.md` for rollback guidance.
+
+## Known limitations
+
+- CITY//01 is synthetic and is not operational municipal telemetry.
+- There is no production backend, database, authentication service, broker, or persistent server state.
+- The mission clock is simulated rather than remote realtime telemetry.
+- Snapdragon/QNN acceleration remains unverified until exact-device proof passes the hardware gate.
+- Persistent restart recovery is not implemented; browser refresh/application restart resets mission state.
+- No production SLO, uptime, throughput, or user-capacity claims are made.
+- Automated accessibility checks do not replace a manual assistive-technology review.
+- CHAIN//REACTION is decision-support software and must not autonomously control critical infrastructure.
 
 ## Contributor identity
 

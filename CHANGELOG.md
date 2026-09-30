@@ -4,6 +4,10 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Added actionable startup failure diagnostics with explicit corrective actions and Windows error visibility.
+- Added a safe `.env.example` that documents the intentionally empty runtime configuration surface.
+- Corrected restart/recovery documentation to state that persistent mission recovery is not implemented.
+- Added proportional static-release and rollback guidance without introducing release branches or unnecessary deployment machinery.
 - Added a tracked-repository audit for generated junk, real environment files, conflict markers, unresolved source debt markers, private-key material, and common credential/token signatures.
 - Added a React server-render smoke test to catch broken imports and render-time browser-global leakage without adding a heavyweight UI-test dependency.
 - Added a contributor-identity audit that verifies the repository's BackendArchitectX GitHub noreply identity, rejects co-author trailers, and checks the push actor on main.

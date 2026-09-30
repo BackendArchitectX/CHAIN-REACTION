@@ -49,6 +49,12 @@ npm run dev:lan         # explicit LAN exposure
 npm run preview         # localhost production preview
 ```
 
+## Environment configuration
+
+The application currently requires no user-provided runtime environment variables. `.env.example` documents that intentionally empty public configuration surface plus the CI-only launcher flags.
+
+Do not create a real `.env` unless the architecture later gains environment-specific runtime configuration. Real environment files remain ignored by Git.
+
 ## Dependency policy
 
 `package-lock.json` is committed and is part of the build contract.

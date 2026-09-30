@@ -26,6 +26,7 @@ record('npm runtime', npm.status === 0 && npmMajor === 10, npmVersion);
 const requiredPaths = [
   ['package.json', 'project manifest'],
   ['package-lock.json', 'committed deterministic lockfile'],
+  ['.env.example', 'safe environment/configuration example'],
   ['tsconfig.json', 'strict TypeScript configuration'],
   ['vite.config.ts', 'Vite configuration'],
   ['src/main.tsx', 'thin browser bootstrap'],
@@ -54,6 +55,7 @@ const requiredPaths = [
   ['docs/SUPPLY_CHAIN.md', 'software supply-chain contract'],
   ['docs/SYSTEM_BOUNDARIES.md', 'system applicability boundary'],
   ['docs/TESTING.md', 'testing and verification strategy'],
+  ['docs/RELEASE.md', 'release and rollback procedure'],
   ['docs/adr/0001-main-only-trunk.md', 'main-only trunk ADR'],
   ['docs/adr/0002-deterministic-core.md', 'deterministic core ADR'],
 ];
