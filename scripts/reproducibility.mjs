@@ -1,10 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawnSync } from 'node:child_process';
+import { spawnNpm } from './lib/npm.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const manifestPath = join(root, 'dist', 'build-manifest.json');
 
 function fail(message) {
@@ -24,10 +23,9 @@ function normalizedManifest() {
 }
 
 const first = normalizedManifest();
-const secondBuild = spawnSync(npmCommand, ['run', 'build'], {
+const secondBuild = spawnNpm(['run', 'build'], {
   cwd: root,
   stdio: 'inherit',
-  shell: false,
 });
 
 if (secondBuild.error) fail(secondBuild.error.message);

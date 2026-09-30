@@ -1,18 +1,16 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawnSync } from 'node:child_process';
+import { spawnNpm } from './lib/npm.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 mkdirSync(dist, { recursive: true });
 
-const result = spawnSync(npmCommand, ['sbom', '--sbom-format=cyclonedx'], {
+const result = spawnNpm(['sbom', '--sbom-format=cyclonedx'], {
   cwd: root,
   encoding: 'utf8',
-  shell: false,
   maxBuffer: 10 * 1024 * 1024,
 });
 

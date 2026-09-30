@@ -2,10 +2,9 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawnSync } from 'node:child_process';
+import { spawnNpm } from './lib/npm.mjs';
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const cacheDir = join(projectRoot, '.cache');
 const stampFile = join(cacheDir, 'dependencies.sha256');
 const packageJson = join(projectRoot, 'package.json');
@@ -19,11 +18,10 @@ function fail(message) {
   process.exit(1);
 }
 
-function run(command, args, options = {}) {
-  const result = spawnSync(command, args, {
+function runNpm(args, options = {}) {
+  const result = spawnNpm(args, {
     cwd: projectRoot,
     stdio: 'inherit',
-    shell: false,
     ...options,
   });
   if (result.error) fail(result.error.message);
@@ -36,7 +34,7 @@ function assertRuntime() {
     fail(`Node.js >=22.12 <23 is required. Detected ${process.version}.`);
   }
 
-  const npmVersion = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
+  const npmVersion = spawnNpm(['--version'], { cwd: projectRoot, encoding: 'utf8' });
   if (npmVersion.status !== 0) fail('npm was not found. Install Node.js 22 LTS with npm 10.');
   const npmMajor = Number(npmVersion.stdout.trim().split('.')[0]);
   if (npmMajor !== 10) fail(`npm 10.x is required. Detected ${npmVersion.stdout.trim()}.`);
@@ -58,10 +56,9 @@ function ensureDependencies() {
   const previous = existsSync(stampFile) ? readFileSync(stampFile, 'utf8').trim() : '';
   const filesReady = [viteBinary, reactPackage, reactDomPackage].every(existsSync);
   const dependencyTree = filesReady
-    ? spawnSync(npmCommand, ['ls', '--depth=0', '--silent'], {
+    ? spawnNpm(['ls', '--depth=0', '--silent'], {
         cwd: projectRoot,
         stdio: 'ignore',
-        shell: false,
       })
     : null;
   const treeReady = filesReady && dependencyTree?.status === 0;
@@ -79,7 +76,7 @@ function ensureDependencies() {
   }
 
   console.log('[CHAIN//REACTION] Restoring locked project dependencies...');
-  run(npmCommand, ['ci', '--no-fund', '--no-audit']);
+  runNpm(['ci', '--no-fund', '--no-audit']);
 
   mkdirSync(cacheDir, { recursive: true });
   writeFileSync(stampFile, dependencyFingerprint(), 'utf8');
@@ -88,7 +85,7 @@ function ensureDependencies() {
 assertRuntime();
 ensureDependencies();
 console.log('[CHAIN//REACTION] Running startup preflight...');
-run(npmCommand, ['run', 'doctor']);
+runNpm(['run', 'doctor']);
 
 if (process.env.CHAIN_REACTION_PREFLIGHT_ONLY === '1') {
   console.log('[CHAIN//REACTION] Preflight-only startup contract completed successfully.');
@@ -96,4 +93,4 @@ if (process.env.CHAIN_REACTION_PREFLIGHT_ONLY === '1') {
 }
 
 console.log('[CHAIN//REACTION] Starting CITY//01 at http://127.0.0.1:5173 ...');
-run(npmCommand, ['run', 'dev', '--', '--open']);
+runNpm(['run', 'dev', '--', '--open']);

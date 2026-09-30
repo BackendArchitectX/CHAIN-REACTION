@@ -1,10 +1,9 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawnSync } from 'node:child_process';
+import { spawnNpm } from './lib/npm.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const checks = [];
 
 function record(name, pass, detail) {
@@ -19,7 +18,7 @@ function exists(relativePath) {
 const [nodeMajor, nodeMinor] = process.versions.node.split('.').map(Number);
 record('Node.js runtime', nodeMajor === 22 && nodeMinor >= 12, process.version);
 
-const npm = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
+const npm = spawnNpm(['--version'], { cwd: root, encoding: 'utf8' });
 const npmVersion = npm.status === 0 ? npm.stdout.trim() : 'not available';
 const npmMajor = npm.status === 0 ? Number(npmVersion.split('.')[0]) : 0;
 record('npm runtime', npm.status === 0 && npmMajor === 10, npmVersion);
@@ -40,6 +39,7 @@ const requiredPaths = [
   ['run.ps1', 'PowerShell launcher'],
   ['start.sh', 'Unix launcher'],
   ['scripts/bootstrap.mjs', 'one-step bootstrap automation'],
+  ['scripts/lib/npm.mjs', 'cross-platform npm process adapter'],
   ['scripts/quality.mjs', 'repository quality gate'],
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
   ['scripts/smoke.mjs', 'static production smoke gate'],
