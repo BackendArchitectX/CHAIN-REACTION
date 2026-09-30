@@ -18,7 +18,7 @@ export function evaluateForecastLease(input: {
   if (input.worldRevision !== input.forecastRevision) {
     return { status: 'EXPIRED', reason: 'WORLD_CHANGED', expiresInSec: 0 };
   }
-  if (input.nowSec > input.issuedSec + ttlSec) {
+  if (input.nowSec >= input.issuedSec + ttlSec) {
     return { status: 'EXPIRED', reason: 'TTL_EXPIRED', expiresInSec: 0 };
   }
   return { status: 'ACTIVE', reason: 'CURRENT', expiresInSec };
