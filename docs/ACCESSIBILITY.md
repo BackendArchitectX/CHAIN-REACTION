@@ -16,10 +16,13 @@ The operational state must remain understandable without relying only on color.
 - Forced-colors mode retains a visible focus outline.
 - Audit views provide textual equivalents for important state transitions.
 - Responsive layouts preserve reading order across narrower screens.
+- The light-theme small-text palette is checked against a 4.5:1 contrast floor for the primary panel, secondary panel, and network surfaces.
 
 ## Automated contract
 
-`npm run a11y` prevents accidental removal of the core keyboard, semantic, text-equivalent, focus, and reduced-motion guarantees. It runs inside `npm run verify` on Linux and Windows CI.
+`npm run a11y` prevents accidental removal of the core keyboard, semantic, text-equivalent, focus, reduced-motion, and key light-theme contrast guarantees. It runs inside `npm run verify` on Linux and Windows CI.
+
+The contrast gate calculates WCAG-style relative luminance for the project color tokens and rejects small-text foreground/background pairs below 4.5:1.
 
 This is a structural regression gate, not a claim of complete accessibility certification.
 

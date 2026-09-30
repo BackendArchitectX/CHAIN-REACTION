@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Hardened light-theme small-text contrast and added executable 4.5:1 palette contrast checks to the accessibility gate.
+- Replaced ambiguous "live run" and synthetic "edge pulse" wording with explicit simulation-state labels so the UI does not imply remote realtime telemetry or unmeasured health.
 - Preserved staged composite-plan activation: grid rerouting can take effect before a later mobile deployment, while resource accounting records only the components that actually activate.
 - Plan resource requirements are now enforced generically, resource costs are applied only when an intervention actually activates, and checkpoint/final resource state stays consistent.
 - Added regression coverage for resource shortfalls, blocked pre-activation mobile deployment, and activation-time resource accounting.

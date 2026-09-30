@@ -103,7 +103,7 @@ export function CommandView({ mission }: { mission: Mission }) {
           className={mission.playing ? 'attention' : ''}
           aria-pressed={mission.playing}
         >
-          {mission.playing ? 'PAUSE LIVE RUN' : 'RUN MONSOON ZERO'}
+          {mission.playing ? 'PAUSE SIMULATION' : 'RUN MONSOON ZERO'}
         </button>
         <button onClick={() => mission.advance(15)} className="secondary">ADVANCE +15s</button>
         <button onClick={() => mission.setTab('FUTURES')} className="secondary">OPEN REALITY FORKS</button>

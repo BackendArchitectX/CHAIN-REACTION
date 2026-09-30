@@ -77,7 +77,7 @@ export function App() {
     </div>
 
     <footer className="statusbar" role="status" aria-live="polite" aria-atomic="true">
-      <span>EDGE PULSE <b>{mission.chaos.npuUnavailable ? 'DEGRADED' : 'READY'}</b></span>
+      <span>SIMULATION <b>LOCAL / IN-PROCESS</b></span>
       <span>
         NPU{' '}
         <b>

@@ -272,7 +272,7 @@ See `SECURITY.md` and `docs/THREAT_MODEL.md`.
 
 Keyboard navigation includes a skip link and ARIA tab behavior with Arrow, Home, and End navigation. Toggle state is exposed semantically, the mission status bar is a live region, the causal network has a text equivalent, visible focus is enforced, and reduced-motion preferences are respected.
 
-`npm run a11y` protects those structural guarantees. It is a regression gate, not a claim of full accessibility certification.
+`npm run a11y` protects those structural guarantees and verifies key light-theme small-text color pairs against a 4.5:1 contrast floor. It remains a regression gate, not a claim of full accessibility certification.
 
 ## System boundaries
 
