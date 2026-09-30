@@ -23,7 +23,7 @@ describe('CITY//01 deterministic simulation', () => {
     }
   });
 
-  it('marks mobile deployment infeasible when ROAD_12 blocks before activation', () => {
+  it('marks mobile deployment infeasible when ROAD_12 blocks before activation while preserving earlier reroute effects', () => {
     const run = simulate({
       untilSec: 180,
       plan: 'REROUTE_MOBILE',
@@ -31,8 +31,53 @@ describe('CITY//01 deterministic simulation', () => {
       chaos: { ...quiet, roadBlocked: true },
       interventionCommitSec: 48,
     });
+
     expect(run.final.planFeasible).toBe(false);
+    expect(run.final.planActivated).toBe(false);
     expect(run.final.planInfeasibleReason).toContain('ROAD_12');
+    expect(run.final.resources.gridReservePct).toBe(BASE_PARAMETERS.gridSparePct - 18);
+    expect(run.final.resources.mobileUnits).toBe(1);
+  });
+
+  it('fails closed when a plan does not have the required resources', () => {
+    const run = simulate({
+      untilSec: 120,
+      plan: 'REROUTE',
+      parameters: { ...BASE_PARAMETERS, gridSparePct: 8 },
+      chaos: quiet,
+      interventionCommitSec: 48,
+    });
+
+    expect(run.final.planFeasible).toBe(false);
+    expect(run.final.planActivated).toBe(false);
+    expect(run.final.planInfeasibleReason).toContain('Insufficient grid reserve');
+    expect(run.final.resources.gridReservePct).toBe(8);
+  });
+
+  it('applies resource cost at activation and keeps checkpoint resources consistent with final state', () => {
+    const beforeActivation = simulate({
+      untilSec: 5,
+      plan: 'SHED_LOAD',
+      parameters: BASE_PARAMETERS,
+      chaos: quiet,
+      interventionCommitSec: 0,
+    });
+
+    expect(beforeActivation.final.planActivated).toBe(false);
+    expect(beforeActivation.final.resources.gridReservePct).toBe(BASE_PARAMETERS.gridSparePct);
+
+    const run = simulate({
+      untilSec: 60,
+      plan: 'SHED_LOAD',
+      parameters: BASE_PARAMETERS,
+      chaos: quiet,
+      interventionCommitSec: 0,
+    });
+    const finalCheckpoint = run.checkpoints.at(-1);
+
+    expect(run.final.planActivated).toBe(true);
+    expect(run.final.resources.gridReservePct).toBe(BASE_PARAMETERS.gridSparePct - 5);
+    expect(finalCheckpoint?.resources).toEqual(run.final.resources);
   });
 });
 

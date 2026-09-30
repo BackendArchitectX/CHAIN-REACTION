@@ -62,11 +62,13 @@ function planResourceIssue(plan: PlanId, resources: ResourceState): string | und
   return undefined;
 }
 
-function commitPlanResources(plan: PlanId, resources: ResourceState) {
-  const meta = PLANS[plan];
-  resources.gridReservePct = Math.max(0, resources.gridReservePct - meta.gridReserveCost);
-  resources.mobileUnits = Math.max(0, resources.mobileUnits - meta.mobileUnitsRequired);
-  resources.generators = Math.max(0, resources.generators - meta.generatorsRequired);
+function consumeGridReserve(plan: PlanId, resources: ResourceState) {
+  resources.gridReservePct = Math.max(0, resources.gridReservePct - PLANS[plan].gridReserveCost);
+}
+
+function consumeDeploymentResources(plan: PlanId, resources: ResourceState) {
+  resources.mobileUnits = Math.max(0, resources.mobileUnits - PLANS[plan].mobileUnitsRequired);
+  resources.generators = Math.max(0, resources.generators - PLANS[plan].generatorsRequired);
 }
 
 export function evidenceAt(time: number, chaos: ChaosFlags, parameters: WorldParameters): EvidenceEvent[] {
@@ -122,7 +124,8 @@ export function simulate(options: SimulationOptions): SimulationRun {
   const initialResourceIssue = planResourceIssue(plan, resources);
   let planFeasible = initialResourceIssue == null;
   let planInfeasibleReason = initialResourceIssue;
-  let resourcesCommitted = false;
+  let gridReserveCommitted = false;
+  let deploymentResourcesCommitted = false;
   let firstCriticalImpactSec: number | null = null;
   let firstFailureSec: number | null = null;
   let recoverySec: number | null = null;
@@ -144,15 +147,33 @@ export function simulate(options: SimulationOptions): SimulationRun {
       planInfeasibleReason = 'Mobile Unit 01 cannot reach Telecom 07 because ROAD_12 is blocked before activation.';
     }
 
-    if (plan !== 'NO_ACTION' && !resourcesCommitted && planFeasible && t >= activation) {
-      commitPlanResources(plan, resources);
-      resourcesCommitted = true;
+    const rerouteActivation = interventionCommitSec + PLANS.REROUTE.leadTimeSec;
+    const gridEffectActive = initialResourceIssue == null
+      && (rerouteRequested ? t >= rerouteActivation : shedRequested && t >= activation);
+
+    if (plan !== 'NO_ACTION' && !gridReserveCommitted && gridEffectActive) {
+      consumeGridReserve(plan, resources);
+      gridReserveCommitted = true;
     }
 
-    const interventionActive = plan !== 'NO_ACTION' && resourcesCommitted;
-    const rerouteActive = rerouteRequested && interventionActive;
-    const shedActive = shedRequested && interventionActive;
-    const mobileActive = mobileRequested && interventionActive && !mobileRouteBlocked;
+    const mobileActive = mobileRequested
+      && initialResourceIssue == null
+      && t >= activation
+      && !mobileRouteBlocked;
+
+    if (
+      plan !== 'NO_ACTION'
+      && !deploymentResourcesCommitted
+      && initialResourceIssue == null
+      && t >= activation
+      && (!mobileRequested || !mobileRouteBlocked)
+    ) {
+      consumeDeploymentResources(plan, resources);
+      deploymentResourcesCommitted = true;
+    }
+
+    const rerouteActive = rerouteRequested && initialResourceIssue == null && t >= rerouteActivation;
+    const shedActive = shedRequested && initialResourceIssue == null && t >= activation;
 
     let subTarget = 100 - flood * 74;
     if (chaos.secondShock && t >= 185) subTarget -= 10;
@@ -215,7 +236,7 @@ export function simulate(options: SimulationOptions): SimulationRun {
     if (t % 15 === 0 || t === untilSec) {
       checkpoints.push({
         time: t, nodes: cloneNodes(nodes), resources: { ...resources }, activePlan: plan,
-        planActivated: plan === 'NO_ACTION' ? true : resourcesCommitted, planActivationTime: activation, planFeasible, planInfeasibleReason,
+        planActivated: plan === 'NO_ACTION' ? true : t >= activation && planFeasible, planActivationTime: activation, planFeasible, planInfeasibleReason,
         observations: evidenceAt(t, chaos, parameters), trace: [...trace],
       });
     }
@@ -223,7 +244,7 @@ export function simulate(options: SimulationOptions): SimulationRun {
 
   const final: WorldSnapshot = {
     time: untilSec, nodes: cloneNodes(nodes), resources: { ...resources }, activePlan: plan,
-    planActivated: plan === 'NO_ACTION' ? true : resourcesCommitted, planActivationTime: activation, planFeasible, planInfeasibleReason,
+    planActivated: plan === 'NO_ACTION' ? true : untilSec >= activation && planFeasible, planActivationTime: activation, planFeasible, planInfeasibleReason,
     observations: evidenceAt(untilSec, chaos, parameters), trace,
   };
   const critical = NODES.filter(n => n.critical).map(n => final.nodes[n.id]);
