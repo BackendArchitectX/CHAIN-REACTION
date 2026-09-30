@@ -94,7 +94,7 @@ for (const absolute of sourceFiles) {
     if (/from\s+['"]react['"]|require\(['"]react['"]\)/.test(content)) {
       fail('layer-boundary', path, 'Deterministic domain layers must not depend on React.');
     }
-    if (/\b(window|document|localStorage|sessionStorage)\b/.test(content)) {
+    if (/\b(window|document|navigator|localStorage|sessionStorage)\b/.test(content)) {
       fail('browser-boundary', path, 'Deterministic domain layers must not access browser globals.');
     }
     if (/\b(fetch|WebSocket|EventSource)\s*\(/.test(content)) {

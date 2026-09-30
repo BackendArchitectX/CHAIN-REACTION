@@ -20,7 +20,7 @@ const COVERAGE = [
   ['No-safe-plan behavior', 'PROVEN'],
   ['Network offline core', 'PROVEN'],
   ['NPU fallback state', 'PROVEN'],
-  ['Application recovery journal', 'DESIGNED'],
+  ['Application recovery journal', 'NOT IMPLEMENTED'],
   ['Operational city validation', 'NOT CLAIMED'],
 ] as const;
 
@@ -35,7 +35,7 @@ export function ChaosLabView({ mission }: { mission: Mission }) {
             className={`chaos-card ${mission.chaos[key] ? 'active' : ''}`}
             aria-pressed={mission.chaos[key]}
             aria-label={`${title}. ${detail}. ${mission.chaos[key] ? 'Active' : 'Inactive'}.`}
-            onClick={() => mission.toggleChaos(key, time, `${title} injected into CITY//01.`)}
+            onClick={() => mission.toggleChaos(key, time, title)}
           >
             <span>{mission.chaos[key] ? 'ACTIVE' : 'INJECT'}</span>
             <b>{title}</b>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateHardwareProof } from '../src/edge/capabilities';
+import { detectEdgeCapability, validateHardwareProof } from '../src/edge/capabilities';
 
 const proof = {
   schema: 'chainreaction.qnn-proof.v1' as const,
@@ -16,8 +16,10 @@ const proof = {
 };
 
 describe('hardware proof gate', () => {
-  it('accepts a complete exact-device QNN profile', () => {
-    expect(validateHardwareProof(proof).valid).toBe(true);
+  it('accepts and normalizes a complete exact-device QNN profile', () => {
+    const result = validateHardwareProof({ ...proof, provider: ' QNN ' });
+    expect(result.valid).toBe(true);
+    if (result.valid) expect(result.proof.provider).toBe('QNN');
   });
 
   it('rejects a profile with insufficient NPU coverage', () => {
@@ -34,5 +36,26 @@ describe('hardware proof gate', () => {
 
   it('rejects an invalid verification timestamp', () => {
     expect(validateHardwareProof({ ...proof, verifiedAt: 'not-a-date' }).valid).toBe(false);
+  });
+
+  it('rejects numeric strings instead of coercing untrusted input', () => {
+    expect(validateHardwareProof({ ...proof, p50Ms: '8.2' }).valid).toBe(false);
+    expect(validateHardwareProof({ ...proof, npuCoveragePct: '98.4' }).valid).toBe(false);
+  });
+
+  it('rejects non-finite or implausibly large benchmark values', () => {
+    expect(validateHardwareProof({ ...proof, p95Ms: Number.POSITIVE_INFINITY }).valid).toBe(false);
+    expect(validateHardwareProof({ ...proof, memoryMb: 1_000_000 }).valid).toBe(false);
+  });
+
+  it('does not surface malformed proof metrics through capability state', () => {
+    const capability = detectEdgeCapability({ ...proof, p50Ms: '8.2' }, 'ARM64');
+    expect(capability.npuVerified).toBe(false);
+    expect(capability.p50Ms).toBeUndefined();
+    expect(capability.architecture).toBe('ARM64 detected');
+  });
+
+  it('does not read browser globals inside the edge proof boundary', () => {
+    expect(detectEdgeCapability(proof).architecture).toBe('Web runtime / architecture unverified');
   });
 });

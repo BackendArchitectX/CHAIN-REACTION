@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BASE_PARAMETERS, PLANS, SCENARIO_DURATION_SEC, SCENARIO_SEED } from '../data/city01';
 import { evidenceAt, simulate, snapshotAt } from '../core/engine';
 import { evaluateAllPlans, pairedPrevention, selectedPlanSensitivity } from '../core/planning';
@@ -7,7 +7,7 @@ import { evaluateForecastLease } from '../core/leases';
 import { traceFingerprint } from '../core/integrity';
 import { deriveRuntimeTrust } from '../core/runtime';
 import { decisionStability, informationValue } from '../core/decision';
-import { detectEdgeCapability, type HardwareProof } from '../edge/capabilities';
+import { detectEdgeCapability, validateHardwareProof } from '../edge/capabilities';
 import type { ChaosFlags, PlanId } from '../core/types';
 import type { AppTab, AuditEntry } from './types';
 
@@ -18,6 +18,8 @@ const INITIAL_CHAOS: ChaosFlags = {
   secondShock: false,
   npuUnavailable: false,
 };
+
+const MAX_HARDWARE_PROOF_BYTES = 1_000_000;
 
 export function useMission() {
   const [t, setT] = useState(0);
@@ -33,7 +35,9 @@ export function useMission() {
   const [activeCommitSec, setActiveCommitSec] = useState(0);
   const [futureOffset, setFutureOffset] = useState(90);
   const [playing, setPlaying] = useState(false);
-  const [hardwareProof, setHardwareProof] = useState<HardwareProof | null>(null);
+  const [hardwareProof, setHardwareProof] = useState<unknown | null>(null);
+  const auditSequence = useRef(2);
+  const chaosRef = useRef<ChaosFlags>(INITIAL_CHAOS);
   const [audit, setAudit] = useState<AuditEntry[]>([
     { time: 0, kind: 'system', message: 'CITY//01 initialized with deterministic seed 271828.', ref: 'SYS-0001' },
   ]);
@@ -50,7 +54,8 @@ export function useMission() {
     return () => window.clearInterval(timer);
   }, [playing]);
 
-  const appendAudit = (kind: AuditEntry['kind'], message: string, ref: string, at = t) => {
+  const appendAudit = (kind: AuditEntry['kind'], message: string, refPrefix: string, at = t) => {
+    const ref = `${refPrefix}-${String(auditSequence.current++).padStart(4, '0')}`;
     setAudit(items => [...items, { time: at, kind, message, ref }]);
   };
 
@@ -101,7 +106,8 @@ export function useMission() {
     ttlSec: 75,
   });
   const lease = leaseInfo.status;
-  const edgeCapability = detectEdgeCapability(hardwareProof);
+  const runtimeUserAgent = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+  const edgeCapability = detectEdgeCapability(hardwareProof, runtimeUserAgent);
   const runtimeTrust = deriveRuntimeTrust({
     chaos,
     evidence: evidenceDiagnostics,
@@ -136,6 +142,7 @@ export function useMission() {
 
   const reset = () => {
     setT(0);
+    chaosRef.current = INITIAL_CHAOS;
     setChaos(INITIAL_CHAOS);
     setWorldRevision(0);
     setForecastRevision(0);
@@ -147,22 +154,28 @@ export function useMission() {
     setActivePlan('NO_ACTION');
     setActiveCommitSec(0);
     setFutureOffset(90);
+    setHardwareProof(null);
+    auditSequence.current = 2;
     setAudit([{ time: 0, kind: 'system', message: 'CITY//01 initialized with deterministic seed 271828.', ref: 'SYS-0001' }]);
   };
 
-  const toggleChaos = (key: keyof ChaosFlags, minimumTime: number, message: string) => {
+  const toggleChaos = (key: keyof ChaosFlags, minimumTime: number, label: string) => {
+    const at = Math.max(t, minimumTime);
+    const enabled = !chaosRef.current[key];
+    const nextChaos = { ...chaosRef.current, [key]: enabled };
+    chaosRef.current = nextChaos;
     setT(value => Math.max(value, minimumTime));
-    setChaos(current => ({ ...current, [key]: !current[key] }));
+    setChaos(nextChaos);
     setWorldRevision(value => value + 1);
-    appendAudit('observed', message, `E-${8200 + worldRevision}`, Math.max(t, minimumTime));
+    appendAudit('observed', `${label} ${enabled ? 'enabled' : 'cleared'} in CITY//01.`, 'E', at);
   };
 
   const replan = () => {
-    setForecastChaos({ ...chaos });
+    setForecastChaos({ ...chaosRef.current });
     setForecastCommitSec(t);
     setForecastRevision(worldRevision);
     setForecastIssuedSec(t);
-    appendAudit('system', 'Forecast lease renewed. Reality Forks recomputed using current world revision.', `F-${9000 + worldRevision}`);
+    appendAudit('system', 'Forecast lease renewed. Reality Forks recomputed using current world revision.', 'F');
   };
 
   const commitPlan = () => {
@@ -180,10 +193,16 @@ export function useMission() {
   };
 
   const loadHardwareProof = async (file: File) => {
+    if (file.size > MAX_HARDWARE_PROOF_BYTES) {
+      setHardwareProof(null);
+      appendAudit('system', 'Hardware proof rejected because the file exceeds the 1 MB safety limit.', 'EDGE-PROOF');
+      return;
+    }
+
     try {
-      const parsed = JSON.parse(await file.text()) as HardwareProof;
+      const parsed: unknown = JSON.parse(await file.text());
       setHardwareProof(parsed);
-      const result = detectEdgeCapability(parsed);
+      const result = detectEdgeCapability(parsed, runtimeUserAgent);
       appendAudit(
         'system',
         result.npuVerified
@@ -193,11 +212,12 @@ export function useMission() {
       );
     } catch {
       setHardwareProof(null);
-      appendAudit('system', 'Hardware proof could not be parsed as JSON.', 'EDGE-PROOF-ERROR');
+      appendAudit('system', 'Hardware proof could not be parsed as JSON.', 'EDGE-PROOF');
     }
   };
 
   const exportCapsule = () => {
+    const hardwareValidation = validateHardwareProof(hardwareProof);
     const capsule = {
       product: 'CHAIN//REACTION',
       scenario: 'MONSOON ZERO',
@@ -217,7 +237,7 @@ export function useMission() {
       runtimeTrust,
       lease: leaseInfo,
       decisionStability: stability,
-      hardwareProof: edgeCapability.npuVerified ? hardwareProof : null,
+      hardwareProof: hardwareValidation.valid ? hardwareValidation.proof : null,
       trace: liveRun.final.trace,
       audit,
       traceFingerprint: traceFingerprint({ seed: SCENARIO_SEED, activePlan, activeCommitSec, trace: liveRun.final.trace, audit }),
@@ -228,8 +248,10 @@ export function useMission() {
     const link = document.createElement('a');
     link.href = url;
     link.download = `monsoon-zero-t${t}.crx.json`;
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
   return {
