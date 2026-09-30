@@ -5,25 +5,25 @@ CHAIN//REACTION uses a single-maintainer trunk model optimized for a competition
 ## Branch policy
 
 - `main` is the only maintained repository branch.
-- No long-lived `develop`, `release`, or feature branches.
-- Product features are isolated in `src/features/*`, not in persistent Git branches.
+- No long-lived `develop`, release, experiment, backup, or feature branches.
+- Product features are isolated under `src/features/*`, not in persistent Git branches.
+- Completed work is integrated into `main`.
 - Repository automation removes non-`main` branches.
-- All CI and deployment workflows consume `main`.
-- A mainline change is release-ready only after the complete verification pipeline passes.
+- CI and deployment workflows consume `main`.
 
 ## Source organization
 
-- `src/app` owns application composition and mission orchestration.
-- `src/features` owns user-facing vertical slices.
-- `src/ui` contains reusable presentation components.
-- `src/shared` contains pure cross-feature helpers.
-- `src/core` contains deterministic domain logic and must remain UI-, browser-, and network-independent.
-- `src/data` contains versioned synthetic-world configuration.
-- `src/edge` contains accelerator/runtime proof logic and fails closed when proof is incomplete.
-- `scripts` contains lifecycle and repository automation only.
-- `tests` verifies behavior, invariants, metamorphic properties, and proof boundaries.
-- `docs` contains architecture, assurance, security, accessibility, operations, and demo evidence.
-- `public` contains static runtime assets and example proof manifests.
+- `src/app` — application composition and mission orchestration.
+- `src/features` — user-facing vertical slices.
+- `src/ui` — reusable presentation components.
+- `src/shared` — pure cross-feature helpers.
+- `src/core` — deterministic domain logic independent from React/browser APIs.
+- `src/data` — versioned synthetic-world configuration.
+- `src/edge` — pure hardware-proof validation and accelerator capability contracts.
+- `scripts` — lifecycle, verification, build, and repository automation.
+- `tests` — behavior, invariants, metamorphic properties, and proof-boundary tests.
+- `docs` — architecture, assurance, scope, testing, security, accessibility, and operations.
+- `public` — static runtime assets and scenario/proof templates.
 
 ## Reproducibility standard
 
@@ -32,45 +32,75 @@ CHAIN//REACTION uses a single-maintainer trunk model optimized for a competition
 - Direct dependency versions are exact.
 - `package-lock.json` is committed and required.
 - Bootstrap and CI restore dependencies with `npm ci`.
-- CI uses the lockfile as its cache key and performs a high/critical dependency audit.
+- Consecutive production builds must produce identical artifact manifests.
+- Dedicated fresh-clone jobs deliberately begin without project dependencies.
 
 ## Code standards
 
-- Strict TypeScript for both `src` and `tests`.
+- Strict TypeScript for `src` and `tests`.
 - Explicit domain types for simulation and planning contracts.
-- No dynamic code execution in product/runtime modules.
-- No fabricated hardware metrics.
-- No cloud AI dependency in the critical path.
+- Untrusted JSON remains `unknown` until validated.
+- No dynamic code execution in runtime modules.
+- No fabricated hardware metrics or operational performance claims.
+- No cloud AI dependency in the critical simulation path.
 - Deterministic tests for safety and counterfactual behavior.
-- Every hard constraint belongs to the independent Safety Kernel.
-- Browser/runtime integration must not leak into deterministic core/data/edge modules.
-- `src/main.tsx` remains a thin bootstrap rather than a feature container.
+- Browser/runtime integration must not leak into deterministic core/data/edge logic.
+- `src/main.tsx` remains a thin bootstrap.
+- Toggle-like UI controls expose semantic state.
+- Keyboard focus remains visible.
+
+## Contributor identity
+
+The intended human contributor for project work is `BackendArchitectX`.
+
+For local commits, repository-local configuration is:
+
+```bash
+git config --local user.name "backendarchitectx"
+git config --local user.email "96111851+BackendArchitectX@users.noreply.github.com"
+npm run git:identity
+```
+
+The email is the GitHub noreply identity already associated with BackendArchitectX commits in this repository.
+
+The contributor-identity audit:
+
+- verifies reachable commit author and committer email identity;
+- rejects `Co-authored-by` trailers;
+- checks the GitHub actor on pushes to `main`;
+- does not rewrite legitimate history merely to manipulate statistics.
 
 ## Mainline quality gate
 
 Every completed change must pass:
 
-1. Environment, runtime, folder, and lockfile doctor.
-2. Repository/layer quality gate.
-3. TypeScript compile validation for source and tests.
-4. Deterministic automated tests.
-5. Production build with deterministic SHA-256 artifact manifest.
-6. Consecutive-build reproducibility verification.
-7. Production smoke validation and static bundle budgets.
-8. CycloneDX SBOM generation.
-9. High/critical dependency audit in CI.
-10. CodeQL JavaScript/TypeScript static security analysis.
-11. Windows contract verification for the repository and one-step launchers.
-12. HTTP runtime smoke verification against the built application.
-
-## Commit identity
-
-The competition repository is maintained by `BackendArchitectX`. Do not add co-author trailers or automated contributor identities. Repository automation that writes to `main` must use the owner's GitHub noreply identity.
-
-## Production artifact standard
-
-A release-quality build must emit a SHA-256 build manifest and CycloneDX SBOM. Production verification rejects missing referenced assets, hash mismatches, source-map emission, and unexpected bundle-size growth. These controls validate software artifact integrity only; Snapdragon NPU execution remains governed by the independent exact-device hardware-proof boundary.
+1. environment/runtime/folder/lockfile doctor;
+2. repository/layer quality gate;
+3. accessibility contract gate;
+4. strict TypeScript validation;
+5. deterministic automated tests;
+6. production build with SHA-256 artifact manifest;
+7. consecutive-build reproducibility verification;
+8. static production smoke and bundle budgets;
+9. served-production HTTP smoke;
+10. CycloneDX SBOM generation;
+11. high/critical dependency audit;
+12. CodeQL JavaScript/TypeScript analysis;
+13. Windows repository and launcher verification;
+14. fresh-clone one-step startup on Linux and Windows;
+15. contributor-identity audit.
 
 ## Workflow supply-chain standard
 
-External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating action tags. Human-readable comments retain the intended major release beside each pinned SHA.
+External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating Action tags. A separate scheduled dependency audit re-checks the locked dependency graph even when `main` has not changed.
+
+## Production artifact standard
+
+A release-quality build emits:
+
+- `dist/build-manifest.json` with SHA-256 and byte size for production files;
+- `dist/sbom.cdx.json` with a CycloneDX software bill of materials.
+
+Verification rejects missing referenced assets, manifest hash mismatches, production source maps, and unexpected bundle-size growth.
+
+These controls validate the software artifact only. Snapdragon NPU execution remains governed by the exact-device proof boundary.

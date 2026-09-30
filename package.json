@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "node ./scripts/quality.mjs",
     "a11y": "node ./scripts/accessibility.mjs",
+    "git:identity": "node ./scripts/git-identity.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "tsc --noEmit && vite build && node ./scripts/build-manifest.mjs",

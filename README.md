@@ -64,6 +64,7 @@ npm start               # one-step bootstrap + browser launch
 npm run doctor          # environment/repository contract
 npm run lint            # repository/layer quality gate
 npm run a11y            # accessibility contract gate
+npm run git:identity     # verify local backendarchitectx Git identity
 npm run typecheck       # strict TypeScript validation
 npm test                # deterministic assurance tests
 npm run build           # production build + SHA-256 manifest
@@ -148,6 +149,7 @@ CHAIN-REACTION/
 │       ├── codeql.yml
 │       ├── pages.yml
 │       ├── security-audit.yml
+│       ├── identity.yml
 │       └── single-branch.yml
 ├── docs/
 │   ├── adr/
@@ -169,6 +171,7 @@ CHAIN-REACTION/
 │   ├── doctor.mjs
 │   ├── quality.mjs
 │   ├── accessibility.mjs
+│   ├── git-identity.mjs
 │   ├── build-manifest.mjs
 │   ├── reproducibility.mjs
 │   ├── smoke.mjs
@@ -272,6 +275,12 @@ EDGE LAB requires an exact-device `chainreaction.qnn-proof.v1` profile with:
 - valid verification timestamp.
 
 Untrusted proof input is schema-checked and bounded before metrics are accepted. Invalid proof data never surfaces as verified accelerator metrics.
+
+## Contributor identity
+
+The intended human contributor is **BackendArchitectX** only. Local commits should use repository-local Git identity `backendarchitectx` with the verified GitHub noreply address already associated with this repository. Run `npm run git:identity` before manual commits.
+
+CI audits full reachable commit history for the repository-verified BackendArchitectX noreply identity, rejects `Co-authored-by` trailers, and checks the GitHub workflow actor on pushes to `main`. Existing legitimate history is not rewritten merely to manipulate contributor statistics.
 
 ## Branch model
 

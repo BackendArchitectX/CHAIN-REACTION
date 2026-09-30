@@ -42,12 +42,14 @@ const requiredPaths = [
   ['scripts/lib/npm.mjs', 'cross-platform npm process adapter'],
   ['scripts/quality.mjs', 'repository quality gate'],
   ['scripts/accessibility.mjs', 'accessibility contract gate'],
+  ['scripts/git-identity.mjs', 'contributor identity audit'],
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
   ['scripts/smoke.mjs', 'static production smoke gate'],
   ['scripts/runtime-smoke.mjs', 'HTTP runtime smoke gate'],
   ['scripts/sbom.mjs', 'CycloneDX SBOM generator'],
   ['scripts/reproducibility.mjs', 'reproducible-build gate'],
   ['.github/workflows/security-audit.yml', 'scheduled dependency-security audit'],
+  ['.github/workflows/identity.yml', 'BackendArchitectX contributor identity audit'],
   ['docs/SUPPLY_CHAIN.md', 'software supply-chain contract'],
   ['docs/SYSTEM_BOUNDARIES.md', 'system applicability boundary'],
   ['docs/TESTING.md', 'testing and verification strategy'],
@@ -72,6 +74,7 @@ if (existsSync(packagePath)) {
   record('npm engine contract', pkg.engines?.npm === '>=10 <11', pkg.engines?.npm ?? 'missing');
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
   record('Accessibility gate wired', pkg.scripts?.a11y === 'node ./scripts/accessibility.mjs', pkg.scripts?.a11y ?? 'missing');
+  record('Git identity audit wired', pkg.scripts?.['git:identity'] === 'node ./scripts/git-identity.mjs', pkg.scripts?.['git:identity'] ?? 'missing');
   record('Static smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
   record('Runtime smoke gate wired', pkg.scripts?.['runtime:smoke'] === 'node ./scripts/runtime-smoke.mjs', pkg.scripts?.['runtime:smoke'] ?? 'missing');
   record('SBOM gate wired', pkg.scripts?.sbom === 'node ./scripts/sbom.mjs', pkg.scripts?.sbom ?? 'missing');

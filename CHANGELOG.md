@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Added a contributor-identity audit that verifies the repository's BackendArchitectX GitHub noreply identity, rejects co-author trailers, and checks the push actor on main.
+- Added a local `npm run git:identity` pre-commit identity check for `backendarchitectx`.
 - Committed deterministic npm lockfile and standardized locked installs with `npm ci`.
 - Added a zero-dependency repository quality gate for layer boundaries, exact dependency policy, unsafe dynamic execution, and manifest/lock parity.
 - Extended strict TypeScript validation to test sources and added switch fallthrough protection.

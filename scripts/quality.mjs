@@ -51,6 +51,7 @@ if (!existsSync(packageLockPath)) {
     start: 'node ./scripts/bootstrap.mjs',
     lint: 'node ./scripts/quality.mjs',
     a11y: 'node ./scripts/accessibility.mjs',
+    'git:identity': 'node ./scripts/git-identity.mjs',
     smoke: 'node ./scripts/smoke.mjs',
     'runtime:smoke': 'node ./scripts/runtime-smoke.mjs',
     sbom: 'node ./scripts/sbom.mjs',
