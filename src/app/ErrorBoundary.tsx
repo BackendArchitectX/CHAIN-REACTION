@@ -1,16 +1,20 @@
 import React from 'react';
 
-type State = { failed: boolean; message?: string };
+type State = { failed: boolean };
 
 export class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
   state: State = { failed: false };
 
-  static getDerivedStateFromError(error: Error): State {
-    return { failed: true, message: error.message };
+  static getDerivedStateFromError(): State {
+    return { failed: true };
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('[CHAIN//REACTION] Unhandled UI failure', error, info.componentStack);
+    console.error('[CHAIN//REACTION] Unhandled UI failure', {
+      name: error.name,
+      message: error.message,
+      componentStack: info.componentStack,
+    });
   }
 
   render() {
@@ -19,8 +23,8 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Stat
         <section className="panel technical-note">
           <div>
             <b>SAFE UI RECOVERY MODE</b>
-            <span>The presentation layer encountered an unexpected error. Simulation data has not been represented as current.</span>
-            {this.state.message && <code>{this.state.message}</code>}
+            <span>The presentation layer encountered an unexpected error. Simulation data is not being represented as current.</span>
+            <span>Reload the application. If the failure repeats, run the repository diagnostics before continuing the demo.</span>
           </div>
           <button onClick={() => window.location.reload()}>RELOAD APPLICATION</button>
         </section>

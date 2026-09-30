@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Replaced raw UI error-message rendering with generic safe recovery copy while retaining developer diagnostics in the console.
+- Prevented intervention commits after a missed decision horizon and exposed an explicit disabled-state reason.
 - Removed the unsupported replay claim from the UI and docs; the implemented capability is audit trace inspection plus reproducibility-capsule export.
 - Added actionable startup failure diagnostics with explicit corrective actions and Windows error visibility.
 - Added a safe `.env.example` that documents the intentionally empty runtime configuration surface.
