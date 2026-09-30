@@ -77,23 +77,24 @@ Every completed change must pass:
 1. environment/runtime/folder/lockfile doctor;
 2. repository/layer quality gate;
 3. tracked-repository hygiene/common-secret audit;
-4. accessibility contract gate;
-5. strict TypeScript validation;
-6. deterministic automated tests including a React render contract;
-7. production build with SHA-256 artifact manifest;
-8. consecutive-build reproducibility verification;
-9. static production smoke and bundle budgets;
-10. served-production HTTP smoke;
-11. CycloneDX SBOM generation;
-12. high/critical dependency audit;
-13. CodeQL JavaScript/TypeScript analysis;
-14. Windows repository and launcher verification;
-15. fresh-clone one-step startup on Linux and Windows;
-16. contributor-identity audit.
+4. dependency license metadata audit;
+5. accessibility contract gate;
+6. strict TypeScript validation;
+7. deterministic automated tests including a React render contract;
+8. production build with SHA-256 artifact manifest;
+9. consecutive-build reproducibility verification;
+10. static production smoke and bundle budgets;
+11. served-production HTTP smoke;
+12. CycloneDX SBOM generation;
+13. high/critical dependency audit;
+14. CodeQL JavaScript/TypeScript analysis;
+15. Windows repository and launcher verification;
+16. fresh-clone one-step startup on Linux and Windows;
+17. contributor-identity audit.
 
 ## Workflow supply-chain standard
 
-External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating Action tags. A separate scheduled dependency audit re-checks the locked dependency graph even when `main` has not changed.
+External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating Action tags. A separate scheduled dependency audit re-checks the locked dependency graph even when `main` has not changed. Dependency license identifiers are reviewed by `npm run license:audit`; newly introduced or missing metadata fails verification until deliberately reviewed.
 
 ## Production artifact standard
 

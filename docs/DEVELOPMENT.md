@@ -34,7 +34,10 @@ A fresh clone requires package-registry access for the first `npm ci`. After dep
 npm start               # one-step deterministic bootstrap and launch
 npm run doctor          # environment, architecture, lockfile, startup contract
 npm run lint            # repository and layer quality gate
+npm run repo:audit      # tracked junk/secrets/conflict/debt audit
+npm run license:audit   # dependency license metadata review
 npm run a11y            # accessibility contract gate
+npm run git:identity    # verify repository-local contributor identity
 npm run typecheck       # strict TypeScript validation
 npm test                # deterministic assurance suite
 npm run build           # production build + SHA-256 manifest

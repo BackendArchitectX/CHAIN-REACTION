@@ -37,7 +37,7 @@ Before any mainline change is treated as complete:
 npm run verify
 ```
 
-The verification pipeline checks runtime/repository contracts, architecture rules, accessibility, strict TypeScript, deterministic tests, reproducible production builds, artifact integrity, runtime smoke behavior, and SBOM generation.
+The verification pipeline checks runtime/repository contracts, architecture rules, repository hygiene, dependency license metadata, accessibility, strict TypeScript, deterministic tests, reproducible production builds, artifact integrity, runtime smoke behavior, and SBOM generation.
 
 ## Scope
 

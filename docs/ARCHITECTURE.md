@@ -34,6 +34,7 @@ scripts/
 ├── doctor.mjs              # runtime/repository preflight
 ├── quality.mjs             # architecture/repository quality gate
 ├── repository-audit.mjs    # tracked-junk/secret/debt audit
+├── license-audit.mjs        # dependency license metadata gate
 ├── accessibility.mjs       # accessibility contract gate
 ├── git-identity.mjs        # contributor identity audit
 ├── build-manifest.mjs      # SHA-256 production artifact manifest
