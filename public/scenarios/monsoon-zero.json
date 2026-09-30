@@ -1,0 +1,17 @@
+{
+  "schema": "chainreaction.scenario.v1",
+  "id": "monsoon-zero",
+  "title": "MONSOON ZERO",
+  "environment": "CITY//01",
+  "fidelity": "F0_SYNTHETIC_WORLD",
+  "seed": 271828,
+  "durationSec": 420,
+  "events": [
+    { "atSec": 8, "type": "FLOOD_SCENE", "target": "SUBSTATION_03" },
+    { "atSec": 20, "type": "WATER_LEVEL_HIGH", "target": "SUBSTATION_03" },
+    { "atSec": 30, "type": "VOLTAGE_UNSTABLE", "target": "SUBSTATION_03" },
+    { "atSec": 74, "type": "OPTIONAL_ROAD_BLOCK", "target": "ROAD_12" },
+    { "atSec": 185, "type": "OPTIONAL_SECOND_SHOCK", "target": "TELECOM_07" }
+  ],
+  "boundary": "Synthetic infrastructure consequences. Not validated municipal operations."
+}
