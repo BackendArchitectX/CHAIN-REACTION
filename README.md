@@ -246,6 +246,25 @@ A release-quality verification includes:
 - immutable commit-SHA pinning for external GitHub Actions;
 - scheduled dependency-security re-audit.
 
+## Security notes
+
+Security controls are deliberately matched to the current local-browser architecture:
+
+- development and preview bind to loopback by default;
+- LAN exposure is an explicit opt-in command;
+- hardware-proof files are treated as untrusted input and are size/schema/range validated before use;
+- raw UI exceptions are not rendered to end users;
+- the repository audit rejects real environment files, common credential signatures, conflict markers, and tracked generated junk;
+- direct dependency versions are exact and the lockfile is required;
+- CI runs npm vulnerability auditing and CodeQL;
+- external GitHub Actions are pinned to immutable commit SHAs;
+- production source maps are disabled;
+- CSP and no-referrer metadata are present in the application shell.
+
+There is no authentication or authorization layer because there is no multi-user backend/API boundary in the current system. If that architecture changes, server-side enforcement becomes mandatory.
+
+See `SECURITY.md` and `docs/THREAT_MODEL.md`.
+
 ## Accessibility
 
 Keyboard navigation includes a skip link and ARIA tab behavior with Arrow, Home, and End navigation. Toggle state is exposed semantically, the mission status bar is a live region, the causal network has a text equivalent, visible focus is enforced, and reduced-motion preferences are respected.
@@ -358,6 +377,19 @@ See `docs/OPERATIONS.md` for the runbook and `docs/RELEASE.md` for rollback guid
 - No production SLO, uptime, throughput, or user-capacity claims are made.
 - Automated accessibility checks do not replace a manual assistive-technology review.
 - CHAIN//REACTION is decision-support software and must not autonomously control critical infrastructure.
+
+## Architecture decisions
+
+The repository records non-trivial architectural choices in lightweight ADRs:
+
+- `docs/adr/0001-main-only-trunk.md` — why the repository uses one maintained `main` branch;
+- `docs/adr/0002-deterministic-core.md` — why simulation/domain logic remains deterministic and independent from React/browser APIs.
+
+## License
+
+**No project license has been selected yet.** The repository currently contains no `LICENSE` file, so no open-source reuse grant should be assumed.
+
+Selecting a project license is intentionally left as an explicit repository-owner decision. Third-party dependencies remain subject to their own license terms.
 
 ## Contributor identity
 

@@ -4,9 +4,13 @@ Testing is organized around confidence in the actual architecture rather than va
 
 ## Deterministic domain tests
 
-The Vitest suite verifies simulation behavior, Safety Kernel decisions, evidence normalization, Forecast Lease boundaries, exact-device hardware-proof rules, trace integrity, and metamorphic planning invariants.
+The Vitest suite verifies simulation behavior, Safety Kernel decisions, intervention commit eligibility, evidence normalization, Forecast Lease boundaries, exact-device hardware-proof rules, trace integrity, and metamorphic planning invariants.
 
 Fixtures are deterministic and do not require a developer-specific database, machine state, cloud service, or external API.
+
+### Decision-policy regression
+
+`tests/decision.test.ts` verifies the single deterministic commit policy used by both application orchestration and the Futures UI. It covers a valid commit, expired forecast lease, Safety Kernel rejection, and a missed decision horizon so UI/application behavior cannot drift independently.
 
 ## Repository and architecture gates
 

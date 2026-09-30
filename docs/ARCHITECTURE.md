@@ -32,23 +32,34 @@ public/
 scripts/
 ├── bootstrap.mjs           # one-step dependency bootstrap + startup
 ├── doctor.mjs              # runtime/repository preflight
+├── quality.mjs             # architecture/repository quality gate
+├── repository-audit.mjs    # tracked-junk/secret/debt audit
+├── accessibility.mjs       # accessibility contract gate
+├── git-identity.mjs        # contributor identity audit
+├── build-manifest.mjs      # SHA-256 production artifact manifest
+├── reproducibility.mjs     # consecutive-build determinism gate
+├── smoke.mjs               # static production smoke/budgets
+├── runtime-smoke.mjs       # served-production HTTP smoke
+├── sbom.mjs                # CycloneDX SBOM generation
 └── clean.mjs               # generated-output cleanup
 
 tests/
+├── decision.test.ts
+├── edge-proof.test.ts
 ├── engine.test.ts
 ├── evidence.test.ts
-├── edge-proof.test.ts
 ├── integrity.test.ts
 ├── lease.test.ts
 ├── metamorphic.test.ts
-└── safety.test.ts
+├── safety.test.ts
+└── ui-render.test.tsx
 ```
 
 ## Layer responsibilities
 
 ### `core`
 
-Owns simulation semantics, robust planning, safety evaluation, Evidence Fabric normalization, Forecast Lease behavior, decision stability, runtime trust, and deterministic integrity functions. It must remain independent from React and browser presentation code.
+Owns simulation semantics, robust planning, safety evaluation, Evidence Fabric normalization, Forecast Lease behavior, intervention commit eligibility, decision stability, runtime trust, and deterministic integrity functions. It must remain independent from React and browser presentation code.
 
 ### `data`
 
@@ -100,6 +111,7 @@ CITY//01 validates software behavior in a synthetic environment. It does not cla
 
 - The Safety Kernel is independent from intervention ranking.
 - Forecasts expire when their world revision changes or TTL elapses.
+- Intervention commit eligibility is a deterministic domain policy: stale forecasts, Safety Kernel rejection, or a missed decision horizon block commitment before UI state changes.
 - Hardware/NPU status is unverified until exact-device proof passes.
 - The React Error Boundary contains unexpected presentation failures and does not silently present stale state as current.
 - Cloud inference is not required by the simulation core.

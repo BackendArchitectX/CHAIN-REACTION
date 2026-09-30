@@ -9,6 +9,7 @@ CHAIN//REACTION is intentionally a local-first browser application with a determ
 | Browser UI | In scope | React feature views, accessibility, responsive behavior, failure containment |
 | Deterministic simulation | In scope | Pure TypeScript core with repeatability and metamorphic tests |
 | Safety Kernel | In scope | Independent deterministic hard-constraint evaluation |
+| Intervention commit policy | In scope | One deterministic eligibility rule shared by orchestration and UI |
 | Scenario data | In scope | Versioned repository data under `src/data` and `public/scenarios` |
 | Hardware proof | In scope as a boundary | QNN/NPU status fails closed until exact-device evidence exists |
 | Local exports | In scope | Reproducibility capsule is downloaded by the user's browser |
@@ -24,6 +25,12 @@ CHAIN//REACTION is intentionally a local-first browser application with a determ
 The application does not maintain a server-side source of truth. Mission state is process-local browser state and resets with the application. Scenario definitions and proof templates are version-controlled repository assets. Exported capsules are explicit user-initiated files.
 
 Database migrations, server-side idempotency, backup/restore, database disaster recovery, and API rate limiting are not applicable to the current architecture. If persistence or a backend is introduced later, those controls become mandatory design work rather than assumed capabilities.
+
+## Restart and recovery boundary
+
+Mission state is intentionally in-process only. A hard browser refresh or application restart returns CITY//01 to its deterministic initial state. There is no persistent recovery journal, local-storage checkpoint, or server-side snapshot store in the current build.
+
+Recovery therefore means restarting cleanly and, when needed, exporting a reproducibility capsule before the session ends. Persistent state recovery would require a new storage boundary and corresponding integrity, migration, backup, and privacy controls.
 
 ## Network and realtime boundary
 
