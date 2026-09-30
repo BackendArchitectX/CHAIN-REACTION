@@ -20,7 +20,7 @@ export function AuditView({ mission }: { mission: Mission }) {
 
   return <main className="stack">
     <section className="panel audit-panel">
-      <PanelTitle left="AUDIT & REPLAY" right={`WORLD REV ${mission.worldRevision} · FORECAST REV ${mission.forecastRevision}`} />
+      <PanelTitle left="AUDIT & REPRODUCIBILITY" right={`WORLD REV ${mission.worldRevision} · FORECAST REV ${mission.forecastRevision}`} />
       <div className="audit-legend">
         <span className="tag observed">OBS = observed</span>
         <span className="tag assumed">ASM = assumed</span>

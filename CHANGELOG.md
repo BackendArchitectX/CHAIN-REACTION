@@ -4,6 +4,7 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Removed the unsupported replay claim from the UI and docs; the implemented capability is audit trace inspection plus reproducibility-capsule export.
 - Added actionable startup failure diagnostics with explicit corrective actions and Windows error visibility.
 - Added a safe `.env.example` that documents the intentionally empty runtime configuration surface.
 - Corrected restart/recovery documentation to state that persistent mission recovery is not implemented.

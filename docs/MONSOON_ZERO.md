@@ -13,7 +13,7 @@ A 420-second deterministic flagship scenario for CITY//01.
 7. ROAD_12 can be blocked before the mobile unit arrives, invalidating the prior plan.
 8. The forecast lease expires and Live Replanning is required.
 9. A second telecom-load shock can be injected during recovery to expose recovery debt.
-10. Audit/Replay exports a reproducibility capsule.
+10. Audit & Reproducibility exports a reproducibility capsule.
 
 ## Fixed seed
 

@@ -106,12 +106,12 @@ npm run verify
 - **Forecast Lease** — stale forecasts expire after world changes or TTL expiration.
 - **Proof of Prevention** — paired counterfactuals quantify intervention impact.
 - **Edge Lab** — NPU status remains unverified until exact-device QNN evidence passes the proof gate.
-- **Audit & Replay** — deterministic trace fingerprints and reproducibility-capsule export.
+- **Audit & Reproducibility** — deterministic trace fingerprints and reproducibility-capsule export.
 
 ## Architecture
 
 ```text
-Camera / Sensor / Replay / Operator
+Camera / Sensor / Scenario / Operator
                 │
                 ▼
          Evidence Fabric
