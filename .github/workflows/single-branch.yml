@@ -1,6 +1,7 @@
 name: enforce-single-branch
 
 on:
+  create:
   push:
     branches: [main]
   workflow_dispatch:
@@ -10,6 +11,7 @@ permissions:
 
 jobs:
   prune:
+    if: github.event_name != 'create' || github.event.ref_type == 'branch'
     runs-on: ubuntu-latest
     steps:
       - name: Keep main as the only branch
