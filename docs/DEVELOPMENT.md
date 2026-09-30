@@ -18,7 +18,7 @@ Double-click `start.cmd`, or run:
 npm start
 ```
 
-The bootstrap validates the runtime, validates the installed npm dependency tree, restores dependencies from the committed lockfile only when required, runs the repository preflight, starts Vite on `127.0.0.1:5173`, and opens the browser.
+The bootstrap validates the runtime, validates the installed npm dependency tree, restores dependencies from the committed lockfile only when required, runs repository preflight, starts Vite on `127.0.0.1:5173`, and opens the browser.
 
 ## Prerequisites
 
@@ -26,43 +26,58 @@ The bootstrap validates the runtime, validates the installed npm dependency tree
 - npm `10.x`
 - Git when working from a clone
 
-No backend process, Docker container, API key, database, or cloud service is required for the current CITY//01 simulation build.
+A fresh clone requires package-registry access for the first `npm ci`. After dependencies are restored, CITY//01 does not require a backend, database, cloud inference service, or continuous internet connection.
 
 ## Standard commands
 
 ```bash
-npm start          # one-step deterministic bootstrap and launch
-npm run doctor     # environment, architecture, lockfile, and startup contract
-npm run lint       # zero-dependency repository and layer quality gate
-npm run typecheck  # strict TypeScript validation for src + tests
-npm test           # deterministic assurance suite
-npm run build      # typecheck + production build + SHA-256 manifest
-npm run reproducibility # require identical manifests from consecutive builds
-npm run smoke      # validate production references, hashes, and bundle budgets
-npm run runtime:smoke # serve dist and verify every production asset over HTTP
-npm run sbom       # generate CycloneDX SBOM
-npm run verify     # complete local release-quality gate
-npm run clean      # remove generated output/cache
-npm run dev        # localhost-only development server on :5173
-npm run dev:lan    # explicit LAN exposure on :5173
-npm run preview    # localhost-only production preview on :4173
+npm start               # one-step deterministic bootstrap and launch
+npm run doctor          # environment, architecture, lockfile, startup contract
+npm run lint            # repository and layer quality gate
+npm run a11y            # accessibility contract gate
+npm run typecheck       # strict TypeScript validation
+npm test                # deterministic assurance suite
+npm run build           # production build + SHA-256 manifest
+npm run reproducibility # require identical consecutive build manifests
+npm run smoke           # static production reference/hash/budget checks
+npm run runtime:smoke   # serve dist and verify built assets over HTTP
+npm run sbom            # CycloneDX SBOM
+npm run verify          # complete local release-quality gate
+npm run clean           # remove generated output/cache
+npm run dev             # localhost-only dev server
+npm run dev:lan         # explicit LAN exposure
+npm run preview         # localhost production preview
 ```
 
 ## Dependency policy
 
-`package-lock.json` is committed and is part of the build contract. Local bootstrap and CI use `npm ci`; do not delete the lockfile or replace locked installs with floating dependency resolution.
+`package-lock.json` is committed and is part of the build contract.
 
-Top-level dependency versions in `package.json` are exact. The repository quality gate verifies manifest/lockfile version and engine parity.
+- local bootstrap and CI use `npm ci`;
+- top-level dependency versions are exact;
+- installed dependencies are health-checked before reuse;
+- the manifest/lockfile engine contract must remain aligned.
 
-## First-run connectivity
-
-The launcher owns dependency restoration, but a fresh clone requires package-registry access for the initial `npm ci`. Once dependencies are restored, CITY//01 does not require cloud inference or continuous internet connectivity.
-
-CI sets `CHAIN_REACTION_PREFLIGHT_ONLY=1` to exercise the real one-step launch wrappers without keeping a development server alive.
+Do not delete the lockfile or replace locked installs with floating dependency resolution.
 
 ## Runtime safety
 
-Development binds to `127.0.0.1` by default. LAN exposure requires `npm run dev:lan`. Port `5173` is strict so an occupied port fails clearly instead of silently starting on a different address. Production preview uses strict port `4173`.
+Development binds to `127.0.0.1` by default. LAN exposure requires `npm run dev:lan`.
+
+Port `5173` is strict, so a conflict fails explicitly instead of silently moving the application. Production preview uses strict port `4173`.
+
+## Fresh-clone assurance
+
+CI has a dedicated Linux/Windows fresh-clone matrix. It checks out the repository with no project dependencies installed and runs only the root launcher.
+
+The launcher itself must:
+
+1. validate the runtime;
+2. restore locked dependencies;
+3. validate repository startup contracts;
+4. exit successfully in CI preflight mode.
+
+This protects the promised developer experience from depending on a previously prepared machine.
 
 ## Generated files
 
@@ -73,9 +88,15 @@ Never commit:
 - `.vite/`
 - `.cache/`
 - coverage output
-- local `.env*` files except `.env.example`
+- local `.env*` files except a safe example if one is introduced
 
-## Before a mainline change
+## Main-only workflow
+
+This repository intentionally has one maintained branch: `main`.
+
+Product features live under `src/features/*`; they are feature modules, not Git feature branches. Completed work is integrated into `main`, and repository automation removes non-`main` branches.
+
+## Before considering work complete
 
 Run:
 
@@ -83,8 +104,4 @@ Run:
 npm run verify
 ```
 
-The same gate is executed in GitHub Actions together with the high/critical dependency audit.
-
-## Main-only workflow
-
-This repository intentionally has one maintained branch: `main`. Product features live under `src/features/*`; they are feature modules, not long-lived Git branches. All completed work is integrated directly into `main` and non-`main` repository branches are automatically removed.
+Then ensure CI is green on Linux and Windows.

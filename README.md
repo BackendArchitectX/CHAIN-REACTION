@@ -4,13 +4,13 @@
 
 > **Observe uncertainty. Fork the future. Preserve the critical.**
 
-CHAIN//REACTION is a competition-grade resilience decision-support prototype for the Snapdragon AI Lab Build & Present Challenge. It combines a deterministic synthetic infrastructure world model, evidence-aware incident reasoning, robust paired counterfactual planning, an independent Safety Kernel, and a strict exact-device hardware-proof boundary for future Snapdragon NPU perception.
+CHAIN//REACTION is a local-first resilience decision-support prototype for the Snapdragon AI Lab Build & Present Challenge. It combines a deterministic synthetic infrastructure world model, evidence-aware incident reasoning, paired counterfactual planning, an independent Safety Kernel, and an exact-device hardware-proof boundary for future Snapdragon NPU perception.
 
-The current environment is **CITY//01**, a synthetic infrastructure network. It validates the software architecture, algorithms, safety behavior, reproducibility, assurance workflow, and user experience. It does **not** claim real municipal operational effectiveness.
+The current environment is **CITY//01**, a synthetic infrastructure network. It validates software architecture, deterministic behavior, safety logic, reproducibility, assurance workflows, and user experience. It does **not** claim operational municipal validation.
 
 ## One-step start
 
-### Windows — simplest
+### Windows
 
 Double-click:
 
@@ -18,7 +18,7 @@ Double-click:
 start.cmd
 ```
 
-Or run:
+or:
 
 ```powershell
 .\run.ps1
@@ -30,30 +30,52 @@ Or run:
 npm start
 ```
 
-That is the complete startup flow. The bootstrap verifies the supported runtime, validates the installed dependency tree, restores dependencies from the committed lockfile only when necessary, starts the local application, and opens it in the browser. A fresh clone requires package-registry access for the initial locked dependency restore; after dependencies are present, CITY//01 itself has no cloud runtime dependency.
+That is the entire startup flow. The bootstrap:
 
-**Prerequisites:** Node.js >=22.12 <23 and npm 10.x.
+1. validates Node.js and npm;
+2. validates the committed lockfile;
+3. validates any existing dependency tree;
+4. restores locked dependencies with `npm ci` only when required;
+5. runs the repository/environment preflight;
+6. starts the application on `127.0.0.1:5173`;
+7. opens the browser.
 
-No backend terminal, second process, Docker container, database, API key, or cloud service is required for the CITY//01 build. The default development server binds to `127.0.0.1`; LAN exposure is opt-in with `npm run dev:lan`.
+A fresh clone requires package-registry access for the initial dependency restore. Once dependencies are present, CITY//01 itself has no cloud runtime dependency.
+
+**Required runtime:** Node.js `>=22.12 <23`, npm `10.x`.
+
+No separate backend terminal, Docker container, database, Redis, Kafka, API key, or cloud AI service is required for the current build.
+
+## Technology stack
+
+- React 19
+- TypeScript 5
+- Vite 7
+- Vitest 5
+- deterministic TypeScript simulation core
+- GitHub Actions
+- CodeQL
+- CycloneDX SBOM generation
 
 ## Engineering commands
 
 ```bash
-npm start          # one-step bootstrap + browser launch
-npm run doctor     # environment/repository contract check
-npm run dev        # local-only development server
-npm run dev:lan    # explicitly expose development server to LAN
-npm run typecheck  # strict TypeScript validation
-npm test           # deterministic assurance suite
-npm run build      # typecheck + production build + SHA-256 build manifest
-npm run lint       # repository/layer quality gate
-npm run reproducibility # build twice and require identical artifact manifests
-npm run smoke      # production asset/hash/budget smoke gate
-npm run runtime:smoke # serve dist and request every declared production asset
-npm run sbom       # CycloneDX software bill of materials
-npm run verify     # complete local release-quality gate
-npm run clean      # remove generated output/cache
-npm run preview    # preview production output locally
+npm start               # one-step bootstrap + browser launch
+npm run doctor          # environment/repository contract
+npm run lint            # repository/layer quality gate
+npm run a11y            # accessibility contract gate
+npm run typecheck       # strict TypeScript validation
+npm test                # deterministic assurance tests
+npm run build           # production build + SHA-256 manifest
+npm run reproducibility # build twice and compare manifests
+npm run smoke           # static production artifact/budget smoke
+npm run runtime:smoke   # serve dist and request built artifacts
+npm run sbom            # CycloneDX SBOM
+npm run verify          # complete local release-quality gate
+npm run clean           # remove generated output/cache
+npm run dev             # localhost development server
+npm run dev:lan         # explicit LAN development mode
+npm run preview         # localhost production preview
 ```
 
 Before treating a change as complete:
@@ -62,37 +84,20 @@ Before treating a change as complete:
 npm run verify
 ```
 
-GitHub Actions restores the committed lockfile with npm ci, runs the same verification path, enforces the high/critical dependency-security gate, requires reproducible consecutive builds, and publishes the build manifest plus CycloneDX SBOM as short-lived assurance evidence. External Actions are pinned to immutable commit SHAs, and CodeQL performs JavaScript/TypeScript static security analysis on main.
-
-## Startup assurance
-
-Windows is the primary competition target. CI validates the complete repository on Windows and exercises both `run.ps1` and `start.cmd` through the same bootstrap used by users. Linux CI also exercises the executable `start.sh` contract. CI uses `CHAIN_REACTION_PREFLIGHT_ONLY=1` so the real launch wrappers can be verified without leaving a long-running development server behind.
-
-## Production assurance
-
-Every successful verification produces:
-
-- `dist/build-manifest.json` with SHA-256 and byte size for every production artifact.
-- `dist/sbom.cdx.json` with a CycloneDX software bill of materials.
-- A production smoke check that verifies artifact hashes, local asset references, absence of source maps, and static bundle-size budgets.
-- An HTTP runtime smoke check that boots the production preview and requests the application plus every artifact declared by the build manifest.
-
-See `docs/SUPPLY_CHAIN.md` for the supply-chain contract and `docs/adr/` for architectural decisions.
-
 ## Product capabilities
 
-- **Living Causal Twin** — explicit power, telecom, healthcare, water, transport, and emergency dependencies.
-- **Evidence Fabric** — confidence, freshness, trust, event time, provenance, deduplication, contradiction and lateness diagnostics.
-- **Reality Forks** — synchronized intervention branches created from equivalent world state.
-- **Common-randomness evaluation** — each plan is stress-tested against the same sampled uncertainties.
-- **Resilience Envelope** — robustness across hundreds of plausible futures rather than one scripted future.
-- **Decision Horizon** — remaining time in which an intervention can still become effective.
-- **Decision Stability** — makes fragile intervention choices visible.
-- **Next Best Observation** — identifies which missing measurement has the greatest information value.
-- **Independent Safety Kernel** — deterministic hard constraints reject unsafe or infeasible simulated plans.
+- **Living Causal Twin** — explicit dependencies across power, telecom, healthcare, water, transport, and response systems.
+- **Evidence Fabric** — confidence, freshness, provenance, deduplication, contradictions, lateness, and clock-skew diagnostics.
+- **Reality Forks** — synchronized intervention branches from equivalent world state.
+- **Common-randomness evaluation** — candidate plans face the same sampled uncertainties.
+- **Resilience Envelope** — robustness across hundreds of plausible futures.
+- **Decision Horizon** — remaining time in which intervention can still become effective.
+- **Decision Stability** — exposes fragile plan choices.
+- **Next Best Observation** — shows the most valuable missing measurement.
+- **Independent Safety Kernel** — hard constraints reject unsafe or infeasible simulated plans.
 - **Forecast Lease** — stale forecasts expire after world changes or TTL expiration.
-- **Proof of Prevention** — paired counterfactuals quantify how the selected intervention changes outcomes.
-- **Edge Lab** — NPU status remains unverified until exact-device QNN evidence passes the hardware gate.
+- **Proof of Prevention** — paired counterfactuals quantify intervention impact.
+- **Edge Lab** — NPU status remains unverified until exact-device QNN evidence passes the proof gate.
 - **Audit & Replay** — deterministic trace fingerprints and reproducibility-capsule export.
 
 ## Architecture
@@ -130,7 +135,7 @@ Twin Consistency   Assumption Model
               Human
 ```
 
-The simulator and Safety Kernel run as deterministic CPU logic. The UI uses the browser compositor/GPU. Snapdragon NPU usage is reserved for validated on-device perception workloads and is never inferred from configuration alone.
+The simulator and Safety Kernel are deterministic CPU logic. The browser UI is presentation only. Snapdragon NPU execution is never inferred from configuration and remains unverified until exact-device evidence passes the hardware-proof contract.
 
 ## Repository structure
 
@@ -139,101 +144,145 @@ CHAIN-REACTION/
 ├── .github/
 │   ├── CODEOWNERS
 │   └── workflows/
-│       ├── ci.yml                 # Linux + Windows verification
-│       ├── codeql.yml             # static security analysis
-│       ├── pages.yml              # gated static deployment
-│       ├── security-audit.yml     # scheduled dependency audit
-│       └── single-branch.yml      # main-only repository enforcement
+│       ├── ci.yml
+│       ├── codeql.yml
+│       ├── pages.yml
+│       ├── security-audit.yml
+│       └── single-branch.yml
 ├── docs/
+│   ├── adr/
 │   ├── ARCHITECTURE.md
+│   ├── ACCESSIBILITY.md
 │   ├── DEVELOPMENT.md
+│   ├── OPERATIONS.md
 │   ├── REPOSITORY_STANDARD.md
-│   ├── HARDWARE_PROOF.md
-│   └── ...                        # assurance, safety, threat model, accessibility
+│   ├── SYSTEM_BOUNDARIES.md
+│   ├── TESTING.md
+│   ├── SUPPLY_CHAIN.md
+│   ├── THREAT_MODEL.md
+│   └── HARDWARE_PROOF.md
 ├── public/
-│   ├── scenarios/                 # versioned synthetic scenario manifests
-│   └── *.json                     # hardware/model proof templates
+│   └── scenarios/
 ├── scripts/
-│   ├── bootstrap.mjs              # one-step dependency bootstrap + startup
-│   ├── doctor.mjs                 # environment/repository preflight
-│   ├── quality.mjs                # repository/layer quality gate
-│   ├── build-manifest.mjs         # SHA-256 production manifest
-│   ├── reproducibility.mjs        # consecutive-build determinism gate
-│   ├── smoke.mjs                  # static artifact smoke gate
-│   ├── runtime-smoke.mjs          # served-production HTTP smoke gate
-│   ├── sbom.mjs                   # CycloneDX SBOM generator
-│   └── clean.mjs                  # generated-output cleanup
+│   ├── lib/npm.mjs
+│   ├── bootstrap.mjs
+│   ├── doctor.mjs
+│   ├── quality.mjs
+│   ├── accessibility.mjs
+│   ├── build-manifest.mjs
+│   ├── reproducibility.mjs
+│   ├── smoke.mjs
+│   ├── runtime-smoke.mjs
+│   ├── sbom.mjs
+│   └── clean.mjs
 ├── src/
 │   ├── app/
-│   │   ├── App.tsx                # application composition root
-│   │   ├── ErrorBoundary.tsx      # fail-safe presentation boundary
-│   │   ├── types.ts               # application contracts
-│   │   └── useMission.ts          # mission orchestration state
-│   ├── core/                      # deterministic domain/simulation layer
-│   ├── data/                      # CITY//01 domain configuration
-│   ├── edge/                      # exact-device QNN proof boundary
+│   ├── core/
+│   ├── data/
+│   ├── edge/
 │   ├── features/
 │   │   ├── audit/
 │   │   ├── chaos/
 │   │   ├── command/
 │   │   ├── edge/
-│   │   └── futures/               # feature-isolated screens
-│   ├── shared/                    # pure formatting/status helpers
-│   ├── ui/                        # reusable presentation components
-│   ├── main.tsx                   # minimal React bootstrap only
-│   └── styles.css                 # application design system
-├── tests/                         # behavior, invariants, metamorphic, hardware-proof tests
-├── start.cmd                      # Windows one-click entry point
-├── start.sh                       # Unix one-step entry point
-├── run.ps1                        # PowerShell one-step entry point
-├── package.json                   # lifecycle/toolchain contract
-├── tsconfig.json                  # strict TypeScript configuration
-└── vite.config.ts                 # build/development configuration
+│   │   └── futures/
+│   ├── shared/
+│   ├── ui/
+│   └── main.tsx
+├── tests/
+├── start.cmd
+├── start.sh
+├── run.ps1
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
-The dependency direction is intentional: presentation features depend on application/core contracts; deterministic core logic does not depend on React or browser UI code.
+The dependency direction is intentional: presentation features depend on application/domain contracts; deterministic domain logic does not depend on React or browser APIs.
 
-## Branch model
+## Startup assurance
 
-This competition repository maintains **one branch only: `main`**.
+CI tests the one-step contract on both Linux and Windows.
 
-- no `develop` branch;
-- no release branches;
-- no long-lived feature branches;
-- repository automation actively removes non-`main` branches;
-- all maintained CI and deployment automation targets `main`.
+A dedicated fresh-clone matrix starts with no `node_modules` and invokes only the root launcher:
+
+- Linux: `./start.sh`
+- Windows: `start.cmd`
+
+The bootstrap itself must restore locked dependencies and complete preflight. Separate Windows verification also executes both `run.ps1` and `start.cmd`.
+
+## Quality and security gates
+
+A release-quality verification includes:
+
+- repository/environment doctor;
+- architectural dependency checks;
+- accessibility contract checks;
+- strict TypeScript;
+- deterministic and metamorphic tests;
+- production build;
+- SHA-256 artifact manifest;
+- consecutive-build reproducibility;
+- static bundle budgets;
+- served-production HTTP smoke;
+- CycloneDX SBOM;
+- high/critical npm vulnerability blocking;
+- CodeQL JavaScript/TypeScript analysis;
+- immutable commit-SHA pinning for external GitHub Actions;
+- scheduled dependency-security re-audit.
+
+## Accessibility
+
+Keyboard navigation includes a skip link and ARIA tab behavior with Arrow, Home, and End navigation. Toggle state is exposed semantically, the mission status bar is a live region, the causal network has a text equivalent, visible focus is enforced, and reduced-motion preferences are respected.
+
+`npm run a11y` protects those structural guarantees. It is a regression gate, not a claim of full accessibility certification.
+
+## System boundaries
+
+The current build deliberately has no backend API, database, authentication service, message broker, or cloud inference dependency. Those controls are therefore not faked.
+
+See:
+
+- `docs/SYSTEM_BOUNDARIES.md`
+- `docs/TESTING.md`
+- `docs/ARCHITECTURE.md`
+- `docs/OPERATIONS.md`
+- `docs/REPOSITORY_STANDARD.md`
+- `docs/SUPPLY_CHAIN.md`
 
 ## Flagship scenario — MONSOON ZERO
 
-MONSOON ZERO is a deterministic 420-second CITY//01 incident using seed **271828**. Flood-like evidence near `SUBSTATION_03` propagates through dependent systems while Reality Forks compare interventions across paired futures. Chaos Lab can inject conflicting evidence, stale perception, route loss, NPU unavailability, and a second shock to test fail-safe behavior and replanning.
+MONSOON ZERO is a deterministic 420-second CITY//01 incident using seed **271828**. Flood-like evidence near `SUBSTATION_03` propagates through dependent systems while Reality Forks compare interventions across paired futures.
 
-Scenario manifest: [`public/scenarios/monsoon-zero.json`](public/scenarios/monsoon-zero.json)
+Scenario manifest: `public/scenarios/monsoon-zero.json`.
 
 ## Snapdragon hardware proof gate
 
-The repository deliberately does not fabricate accelerator metrics. EDGE LAB only accepts `chainreaction.qnn-proof.v1` evidence after real profiling on the exact Snapdragon-powered HP target.
+The repository does not fabricate accelerator metrics.
 
-The proof gate requires device identity, QNN execution, model SHA-256, at least 90% measured NPU layer coverage for the competition gate, valid warm P50/P95 latency, cold-load time, memory footprint, and a verification timestamp.
+EDGE LAB requires an exact-device `chainreaction.qnn-proof.v1` profile with:
 
-The included example profile intentionally fails until replaced by measured evidence. See [`docs/HARDWARE_PROOF.md`](docs/HARDWARE_PROOF.md).
+- Snapdragon device identity;
+- QNN execution provider;
+- 64-character model SHA-256;
+- 90–100% numeric measured NPU layer coverage for the competition gate;
+- finite, internally consistent P50/P95 latency;
+- finite cold-load time and memory values;
+- valid verification timestamp.
 
-## Quality and security standard
+Untrusted proof input is schema-checked and bounded before metrics are accepted. Invalid proof data never surfaces as verified accelerator metrics.
 
-- Node.js 22 LTS runtime contract.
-- Exact top-level dependency versions.
-- Strict TypeScript.
-- Environment/repository doctor.
-- Deterministic and metamorphic tests.
-- Production build in CI.
-- High/critical npm vulnerability gate.
-- Localhost-only development by default.
-- CODEOWNERS and security policy.
-- Fail-safe UI Error Boundary.
-- Explicit Observed / Assumed / Predicted truth boundary.
-- No cloud AI dependency in the critical simulation path.
-- No fabricated NPU or municipal-performance claims.
+## Branch model
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md), [`docs/REPOSITORY_STANDARD.md`](docs/REPOSITORY_STANDARD.md), and [`SECURITY.md`](SECURITY.md).
+This repository intentionally maintains **one branch only: `main`**.
+
+- no `develop`;
+- no release branches;
+- no persistent feature branches;
+- product features are modules under `src/features/*`;
+- completed work is integrated into `main`;
+- automation removes non-`main` branches.
 
 ## Safety boundary
 
