@@ -10,6 +10,10 @@ describe('Forecast Lease', () => {
     expect(evaluateForecastLease({ worldRevision: 1, forecastRevision: 1, nowSec: 91, issuedSec: 10, ttlSec: 60 }).reason).toBe('TTL_EXPIRED');
   });
 
+  it('expires exactly at the zero-second TTL boundary', () => {
+    expect(evaluateForecastLease({ worldRevision: 1, forecastRevision: 1, nowSec: 70, issuedSec: 10, ttlSec: 60 })).toEqual({ status: 'EXPIRED', reason: 'TTL_EXPIRED', expiresInSec: 0 });
+  });
+
   it('reports remaining validity while current', () => {
     expect(evaluateForecastLease({ worldRevision: 1, forecastRevision: 1, nowSec: 40, issuedSec: 10, ttlSec: 60 }).expiresInSec).toBe(30);
   });
