@@ -1,4 +1,5 @@
 import { EDGES, NODES, PLANS } from '../data/city01';
+import { evaluateSafetyEnvelope } from './safety';
 import type {
   ChaosFlags,
   EvidenceEvent,
@@ -207,16 +208,19 @@ export function simulate(options: SimulationOptions): SimulationRun {
   const critical = NODES.filter(n => n.critical).map(n => final.nodes[n.id]);
   const failures = critical.filter(n => n.status === 'failed').length;
   const preserved = critical.filter(n => n.status !== 'failed' && n.status !== 'critical').length;
-  const safetyViolations: string[] = [];
-  if (!planFeasible && plan !== 'NO_ACTION') safetyViolations.push(planInfeasibleReason ?? 'Plan prerequisites are not satisfied.');
-  if (minimumHospitalReserve < 10) safetyViolations.push('Hospital reserve falls below 10%.');
-  if (minimumCriticalCapacity < 35) safetyViolations.push('A critical service drops below the CITY//01 35% safety-capacity floor.');
-  if (plan === 'NO_ACTION' && firstCriticalImpactSec != null) safetyViolations.push('No-action branch allows critical-service impact.');
+  const safety = evaluateSafetyEnvelope({
+    plan,
+    planFeasible,
+    planInfeasibleReason,
+    minimumHospitalReserve,
+    minimumCriticalCapacity,
+    firstCriticalImpactSec,
+  });
 
   return {
     final, checkpoints, firstCriticalImpactSec, firstFailureSec, recoverySec,
     failures, criticalServicesPreserved: preserved, minimumCriticalCapacity, minimumHospitalReserve,
-    safety: { pass: safetyViolations.length === 0, violations: safetyViolations },
+    safety,
   };
 }
 
