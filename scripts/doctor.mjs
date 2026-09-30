@@ -16,11 +16,13 @@ function exists(relativePath) {
   return existsSync(join(root, relativePath));
 }
 
-const nodeMajor = Number(process.versions.node.split('.')[0]);
-record('Node.js runtime', nodeMajor === 22, process.version);
+const [nodeMajor, nodeMinor] = process.versions.node.split('.').map(Number);
+record('Node.js runtime', nodeMajor === 22 && nodeMinor >= 12, process.version);
 
 const npm = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
-record('npm', npm.status === 0, npm.status === 0 ? npm.stdout.trim() : 'not available');
+const npmVersion = npm.status === 0 ? npm.stdout.trim() : 'not available';
+const npmMajor = npm.status === 0 ? Number(npmVersion.split('.')[0]) : 0;
+record('npm', npm.status === 0 && npmMajor >= 10, npmVersion);
 
 record('package.json', exists('package.json'), 'project manifest');
 record('TypeScript config', exists('tsconfig.json'), 'tsconfig.json');
@@ -46,6 +48,7 @@ if (existsSync(packagePath)) {
   record('Project version', pkg.version === '0.4.0', pkg.version ?? 'missing');
   record('Single-step start script', pkg.scripts?.start === 'node ./scripts/bootstrap.mjs', pkg.scripts?.start ?? 'missing');
   record('Local-only dev binding', pkg.scripts?.dev === 'vite --host 127.0.0.1', pkg.scripts?.dev ?? 'missing');
+  record('Node engine contract', pkg.engines?.node === '>=22.12 <23', pkg.engines?.node ?? 'missing');
 }
 
 const mainPath = join(root, 'src', 'main.tsx');
