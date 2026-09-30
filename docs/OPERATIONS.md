@@ -72,7 +72,7 @@ npm start
 
 ## Shutdown
 
-The development server runs in the foreground. Stop it with `Ctrl+C` in the terminal that launched it. No database, cache, broker, or backend process remains to be stopped separately.
+The development server runs in the foreground. Stop it with `Ctrl+C` in the terminal that launched it. Standard interrupt exit codes/signals are treated as expected shutdown rather than application failure. No database, cache, broker, or backend process remains to be stopped separately.
 
 The production HTTP smoke test owns and terminates its preview child process automatically.
 

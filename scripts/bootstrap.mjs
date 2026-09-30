@@ -20,12 +20,24 @@ function fail(message, correctiveAction) {
   process.exit(1);
 }
 
-function runNpm(args, { phase, correctiveAction, ...options } = {}) {
+function runNpm(args, { phase, correctiveAction, allowInterrupt = false, ...options } = {}) {
   const result = spawnNpm(args, {
     cwd: projectRoot,
     stdio: 'inherit',
     ...options,
   });
+
+  const interrupted = allowInterrupt && (
+    result.signal === 'SIGINT'
+    || result.signal === 'SIGTERM'
+    || result.status === 130
+    || result.status === 143
+  );
+
+  if (interrupted) {
+    console.log('\n[CHAIN//REACTION] Shutdown requested. CITY//01 stopped cleanly.');
+    return;
+  }
 
   if (result.error) {
     fail(
@@ -139,4 +151,5 @@ console.log('[CHAIN//REACTION] Starting CITY//01 at http://127.0.0.1:5173 ...');
 runNpm(['run', 'dev', '--', '--open'], {
   phase: 'Development server',
   correctiveAction: 'Check whether port 5173 is already in use. Stop the conflicting process and run the launcher again.',
+  allowInterrupt: true,
 });
