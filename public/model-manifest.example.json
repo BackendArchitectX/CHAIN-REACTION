@@ -1,0 +1,15 @@
+{
+  "model": "scene-classifier-placeholder",
+  "version": "0.0.0",
+  "status": "NOT_SHIPPED",
+  "purpose": "Replace only after exact-device Snapdragon validation",
+  "sha256": null,
+  "target_device": null,
+  "runtime": null,
+  "quantization": null,
+  "npu_layer_coverage": null,
+  "p50_ms": null,
+  "p95_ms": null,
+  "memory_mb": null,
+  "license": null
+}
