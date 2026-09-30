@@ -57,17 +57,19 @@ function ensureDependencies() {
   const fingerprint = dependencyFingerprint();
   const previous = existsSync(stampFile) ? readFileSync(stampFile, 'utf8').trim() : '';
   const filesReady = [viteBinary, reactPackage, reactDomPackage].every(existsSync);
-  const dependencyTree = filesReady && previous === fingerprint
+  const dependencyTree = filesReady
     ? spawnSync(npmCommand, ['ls', '--depth=0', '--silent'], {
         cwd: projectRoot,
         stdio: 'ignore',
         shell: false,
       })
     : null;
-  const dependenciesReady = filesReady && previous === fingerprint && dependencyTree?.status === 0;
+  const treeReady = filesReady && dependencyTree?.status === 0;
+  const dependenciesReady = treeReady && previous === fingerprint;
 
   if (process.env.CHAIN_REACTION_SKIP_INSTALL === '1') {
-    if (!dependenciesReady) fail('Dependencies are missing or stale and CHAIN_REACTION_SKIP_INSTALL=1 is set.');
+    if (!treeReady) fail('Pre-installed dependencies are unavailable or invalid and CHAIN_REACTION_SKIP_INSTALL=1 is set.');
+    console.log('[CHAIN//REACTION] Pre-installed dependency tree verified without mutation.');
     return;
   }
 
