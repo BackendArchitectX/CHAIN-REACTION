@@ -1,0 +1,14 @@
+{
+  "schema": "chainreaction.qnn-proof.v1",
+  "device": "REPLACE_WITH_EXACT_SNAPDRAGON_HP_DEVICE",
+  "provider": "QNN",
+  "model": "scene-classifier.onnx",
+  "modelSha256": "REPLACE_WITH_MODEL_SHA256",
+  "npuCoveragePct": 0,
+  "p50Ms": 0,
+  "p95Ms": 0,
+  "coldLoadMs": 0,
+  "memoryMb": 0,
+  "verifiedAt": null,
+  "note": "Template only. This file intentionally fails the hardware proof gate until populated from exact-device profiling."
+}
