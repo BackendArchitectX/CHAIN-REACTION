@@ -19,7 +19,7 @@
     "git:identity": "node ./scripts/git-identity.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build": "tsc --noEmit && vite build && node ./scripts/build-manifest.mjs",
+    "build": "tsc --noEmit && vite build && npm run notices && node ./scripts/build-manifest.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "doctor": "node ./scripts/doctor.mjs",
     "clean": "node ./scripts/clean.mjs",
@@ -29,7 +29,8 @@
     "sbom": "node ./scripts/sbom.mjs",
     "reproducibility": "node ./scripts/reproducibility.mjs",
     "repo:audit": "node ./scripts/repository-audit.mjs",
-    "license:audit": "node ./scripts/license-audit.mjs"
+    "license:audit": "node ./scripts/license-audit.mjs",
+    "notices": "node ./scripts/third-party-notices.mjs"
   },
   "dependencies": {
     "react": "19.3.0",
@@ -42,5 +43,6 @@
     "typescript": "5.9.3",
     "vite": "7.3.6",
     "vitest": "5.0.3"
-  }
+  },
+  "license": "UNLICENSED"
 }

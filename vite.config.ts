@@ -1,8 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-  plugins: [react()],
+const developmentScriptPolicy = "script-src 'self' 'unsafe-inline'";
+const productionScriptPolicy = "script-src 'self'";
+
+export default defineConfig(({ command }) => ({
+  plugins: [
+    react(),
+    {
+      name: 'production-csp-hardening',
+      transformIndexHtml(html) {
+        if (command !== 'build') return html;
+        return html.replace(developmentScriptPolicy, productionScriptPolicy);
+      },
+    },
+  ],
   base: './',
   server: {
     host: '127.0.0.1',
@@ -21,4 +33,4 @@ export default defineConfig({
     reportCompressedSize: true,
     chunkSizeWarningLimit: 700,
   },
-});
+}));

@@ -14,6 +14,15 @@ Infrastructure failures can cascade across power, telecom, transport, water, hea
 
 The current product is decision-support software for a synthetic environment. It is designed for challenge reviewers, resilience analysts, and engineers evaluating deterministic causal simulation and edge-AI proof boundaries.
 
+## Prerequisites
+
+- Node.js `>=22.12 <23`
+- npm `10.x`
+- Git when working from a clone
+- Package-registry access for the first dependency restore on a fresh machine
+
+No Docker runtime, database server, message broker, API key, or cloud AI account is required.
+
 ## One-step start
 
 ### Windows
@@ -70,12 +79,13 @@ npm start               # one-step bootstrap + browser launch
 npm run doctor          # environment/repository contract
 npm run lint            # repository/layer quality gate
 npm run repo:audit      # tracked junk/secrets/conflict/debt audit
-npm run license:audit   # dependency license metadata review
+npm run license:audit   # project/dependency rights metadata review
+npm run notices         # generate runtime third-party license notices
 npm run a11y            # accessibility contract gate
 npm run git:identity     # verify local backendarchitectx Git identity
 npm run typecheck       # strict TypeScript validation
 npm test                # deterministic assurance tests
-npm run build           # production build + SHA-256 manifest
+npm run build           # production build + third-party notices + SHA-256 manifest
 npm run reproducibility # build twice and compare manifests
 npm run smoke           # static production artifact/budget smoke
 npm run runtime:smoke   # serve dist and request built artifacts
@@ -181,6 +191,7 @@ CHAIN-REACTION/
 │   ├── quality.mjs
 │   ├── repository-audit.mjs
 │   ├── license-audit.mjs
+│   ├── third-party-notices.mjs
 │   ├── accessibility.mjs
 │   ├── git-identity.mjs
 │   ├── build-manifest.mjs
@@ -204,6 +215,7 @@ CHAIN-REACTION/
 │   ├── ui/
 │   └── main.tsx
 ├── tests/
+├── LICENSE
 ├── .env.example
 ├── start.cmd
 ├── start.sh
@@ -234,7 +246,8 @@ A release-quality verification includes:
 - repository/environment doctor;
 - architectural dependency checks;
 - tracked-repository hygiene, unresolved conflict/debt marker, and common secret-material checks;
-- dependency license metadata review;
+- deliberate project rights posture and dependency license metadata review;
+- generated runtime third-party license notices;
 - accessibility contract checks;
 - strict TypeScript;
 - deterministic and metamorphic tests;
@@ -262,7 +275,8 @@ Security controls are deliberately matched to the current local-browser architec
 - CI runs npm vulnerability auditing and CodeQL;
 - external GitHub Actions are pinned to immutable commit SHAs;
 - production source maps are disabled;
-- CSP and no-referrer metadata are present in the application shell.
+- CSP and no-referrer metadata are present in the application shell;
+- development retains Vite's inline React-refresh compatibility, while the production build removes `unsafe-inline` from `script-src` and the smoke gate verifies the emitted policy.
 
 There is no authentication or authorization layer because there is no multi-user backend/API boundary in the current system. If that architecture changes, server-side enforcement becomes mandatory.
 
@@ -340,11 +354,49 @@ For terminal-started processes, press `Ctrl+C` to stop the foreground server. Th
 
 Workspace deep links use stable URL hashes such as `#command`, `#futures`, `#chaos-lab`, `#edge-lab`, and `#audit`. Browser Back/Forward navigation synchronizes the active workspace without introducing a routing dependency.
 
-## API, database, and realtime boundaries
+## Development workflow
 
-The current product has no backend HTTP API and no production database. Mission state is browser-process state, while scenarios and hardware-proof templates are version-controlled assets.
+The repository is a single static React/TypeScript application with a deterministic domain core. There is no backend process to develop separately.
 
-The mission clock and topology propagation are deterministic in-process simulation behavior. They are not remote realtime telemetry and are not presented as WebSocket/SSE data. The dependency network reflects the actual current simulation state.
+Use `npm run typecheck`, `npm test`, and `npm run lint` during development. Run `npm run verify` before treating a mainline change as release-quality. `npm run dev` is loopback-only; `npm run dev:lan` is an explicit opt-in for controlled demonstrations.
+
+## API documentation
+
+There is currently **no backend HTTP API**, Swagger/OpenAPI surface, authentication contract, or server-side endpoint set. The browser consumes version-controlled scenario/model proof assets and executes the deterministic simulation in-process.
+
+If a backend boundary is introduced later, API contracts, validation, authorization, error semantics, and versioning become mandatory rather than being simulated here.
+
+## Database and persistence
+
+There is currently **no production database** and therefore no schema migration mechanism. Mission state is in browser memory. Refreshing or restarting the application resets the mission to the deterministic initial state.
+
+Version-controlled scenario and example proof files under `public/` are static assets, not a persistence layer.
+
+## Realtime behavior
+
+The mission clock, evidence propagation, topology changes, and intervention effects are deterministic **in-process simulation** behavior. They are not remote realtime telemetry and are not presented as WebSocket/SSE data.
+
+The dependency network renders the current simulation state, so node/edge status changes are driven by the same deterministic world state used by planning and safety logic rather than by decorative random counters.
+
+Workspace deep links use stable hash navigation and browser Back/Forward synchronization without a routing dependency.
+
+## Testing
+
+The deterministic assurance suite runs with:
+
+```bash
+npm test
+```
+
+Release-level verification runs:
+
+```bash
+npm run verify
+```
+
+That pipeline covers repository/environment contracts, architecture boundaries, repository hygiene, rights/license metadata, accessibility checks, TypeScript, deterministic domain tests, React server-render smoke, production build, reproducibility, artifact hashes/budgets, served-production HTTP smoke, and SBOM generation.
+
+See `docs/TESTING.md` for the detailed automated/manual boundary. Full assistive-technology and interactive browser walkthroughs remain manual evidence rather than being falsely reported as automated E2E coverage.
 
 ## Observability
 
@@ -392,9 +444,9 @@ The repository records non-trivial architectural choices in lightweight ADRs:
 
 ## License
 
-**No project license has been selected yet.** The repository currently contains no `LICENSE` file, so no open-source reuse grant should be assumed.
+The project is deliberately marked **UNLICENSED / All Rights Reserved**. No open-source license grant is provided for the project source code. See the root `LICENSE` rights notice.
 
-Selecting a project license is intentionally left as an explicit repository-owner decision. Third-party dependencies remain subject to their own license terms.
+Runtime third-party packages remain governed by their own terms. Production builds generate `dist/THIRD_PARTY_LICENSES.txt`, and the repository also emits a CycloneDX SBOM. The automated checks are engineering safeguards and are not represented as legal-compliance certification.
 
 ## Contributor identity
 

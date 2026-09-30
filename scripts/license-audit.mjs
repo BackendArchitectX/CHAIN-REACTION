@@ -1,10 +1,12 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8'));
 const packages = lock.packages ?? {};
+const projectLicensePath = join(root, 'LICENSE');
 
 const reviewedLicenses = new Set([
   'MIT',
@@ -17,6 +19,23 @@ const reviewedLicenses = new Set([
 const failures = [];
 const counts = new Map();
 const runtime = [];
+
+if (pkg.license !== 'UNLICENSED') {
+  failures.push(`project package metadata must declare "UNLICENSED", found "${pkg.license ?? 'missing'}"`);
+}
+
+if (packages['']?.license !== pkg.license) {
+  failures.push('package-lock root license metadata must match package.json');
+}
+
+if (!existsSync(projectLicensePath)) {
+  failures.push('root LICENSE rights notice is missing');
+} else {
+  const projectLicense = readFileSync(projectLicensePath, 'utf8');
+  if (!projectLicense.includes('intentionally UNLICENSED') || !projectLicense.includes('No open-source license')) {
+    failures.push('root LICENSE must clearly state the intentional no-open-source-license posture');
+  }
+}
 
 for (const [path, metadata] of Object.entries(packages)) {
   if (!path) continue;
@@ -50,7 +69,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('[CHAIN//REACTION] Dependency license metadata audit passed.');
+console.log('[CHAIN//REACTION] Project rights posture and dependency license metadata audit passed.');
 for (const [license, count] of [...counts.entries()].sort(([a], [b]) => a.localeCompare(b))) {
   console.log(`  ${license}: ${count}`);
 }

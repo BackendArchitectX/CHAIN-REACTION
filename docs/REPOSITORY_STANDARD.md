@@ -77,11 +77,11 @@ Every completed change must pass:
 1. environment/runtime/folder/lockfile doctor;
 2. repository/layer quality gate;
 3. tracked-repository hygiene/common-secret audit;
-4. dependency license metadata audit;
+4. project rights/dependency license metadata audit;
 5. accessibility contract gate;
 6. strict TypeScript validation;
-7. deterministic automated tests including a React render contract;
-8. production build with SHA-256 artifact manifest;
+7. deterministic automated tests including a React render contract and workspace-hash contract;
+8. production build with runtime third-party notices and SHA-256 artifact manifest;
 9. consecutive-build reproducibility verification;
 10. static production smoke and bundle budgets;
 11. served-production HTTP smoke;
@@ -94,12 +94,13 @@ Every completed change must pass:
 
 ## Workflow supply-chain standard
 
-External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating Action tags. A separate scheduled dependency audit re-checks the locked dependency graph even when `main` has not changed. Dependency license identifiers are reviewed by `npm run license:audit`; newly introduced or missing metadata fails verification until deliberately reviewed.
+External GitHub Actions are pinned to immutable 40-character commit SHAs. The repository quality gate rejects floating Action tags. A separate scheduled dependency audit re-checks the locked dependency graph even when `main` has not changed. The project rights posture is deliberately `UNLICENSED`; dependency license identifiers are reviewed by `npm run license:audit`, and production builds emit runtime license notices. Newly introduced or missing metadata fails verification until deliberately reviewed.
 
 ## Production artifact standard
 
 A release-quality build emits:
 
+- `dist/THIRD_PARTY_LICENSES.txt` with runtime third-party license/copying texts;
 - `dist/build-manifest.json` with SHA-256 and byte size for production files;
 - `dist/sbom.cdx.json` with a CycloneDX software bill of materials.
 

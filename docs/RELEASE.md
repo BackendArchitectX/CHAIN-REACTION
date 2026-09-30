@@ -20,6 +20,7 @@ Only a green `main` revision should be treated as releasable.
 
 The build emits:
 
+- `dist/THIRD_PARTY_LICENSES.txt` — runtime third-party license notices;
 - `dist/build-manifest.json` — SHA-256 artifact manifest;
 - `dist/sbom.cdx.json` — CycloneDX SBOM.
 

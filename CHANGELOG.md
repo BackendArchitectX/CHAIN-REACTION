@@ -4,6 +4,9 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Made the project rights posture explicit and fail-closed: package metadata is `UNLICENSED`, a root rights notice is required, and CI rejects drift between project and lockfile metadata.
+- Added deterministic runtime third-party license notice generation to production builds; the build fails if a shipped runtime package lacks a discoverable license/copying text.
+- Hardened the **production** CSP by removing `unsafe-inline` from `script-src` during the build while preserving Vite React-refresh compatibility in development; the smoke gate verifies the emitted policy.
 - Added stable hash deep links for each mission workspace and synchronized browser Back/Forward navigation without introducing a routing library.
 - Added deterministic navigation-contract tests for valid, default, and unrelated hash locations.
 - Tightened the hardware evidence claim boundary: imported QNN profiles can be accepted for structural review and can expose reported metrics, but the browser no longer labels self-supplied evidence as independently verified hardware execution.

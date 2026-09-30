@@ -20,6 +20,7 @@ function walk(directory) {
 }
 
 if (!existsSync(join(dist, 'index.html'))) fail('dist/index.html is missing.');
+if (!existsSync(join(dist, 'THIRD_PARTY_LICENSES.txt'))) fail('dist/THIRD_PARTY_LICENSES.txt is missing.');
 if (!existsSync(manifestPath)) fail('dist/build-manifest.json is missing.');
 
 if (failures.length === 0) {
@@ -27,6 +28,10 @@ if (failures.length === 0) {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 
   if (!html.includes('id="root"')) fail('Production HTML does not contain the React root.');
+  if (/script-src[^;]*'unsafe-inline'/i.test(html)) fail('Production CSP must not permit unsafe-inline scripts.');
+  if (!(manifest.files ?? []).some(entry => entry.path === 'THIRD_PARTY_LICENSES.txt')) {
+    fail('Production manifest does not include THIRD_PARTY_LICENSES.txt.');
+  }
   if (html.includes('/src/main.tsx')) fail('Production HTML still references the development TypeScript entry point.');
   if (/\b(?:src|href)=["']https?:\/\//i.test(html)) fail('Production HTML contains an external runtime asset reference.');
 

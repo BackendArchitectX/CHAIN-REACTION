@@ -46,6 +46,9 @@ if (!existsSync(packageLockPath)) {
   if (rootLock?.engines?.node !== pkg.engines?.node || rootLock?.engines?.npm !== pkg.engines?.npm) {
     fail('engine-parity', 'package-lock.json', 'Root lockfile engine contract must match package.json.');
   }
+  if (pkg.license !== 'UNLICENSED' || rootLock?.license !== pkg.license) {
+    fail('license-posture', 'package.json/package-lock.json', 'Project rights metadata must deliberately remain UNLICENSED and match the lockfile.');
+  }
 
   const requiredScripts = {
     start: 'node ./scripts/bootstrap.mjs',
@@ -53,6 +56,7 @@ if (!existsSync(packageLockPath)) {
     a11y: 'node ./scripts/accessibility.mjs',
     'repo:audit': 'node ./scripts/repository-audit.mjs',
     'license:audit': 'node ./scripts/license-audit.mjs',
+    notices: 'node ./scripts/third-party-notices.mjs',
     'git:identity': 'node ./scripts/git-identity.mjs',
     smoke: 'node ./scripts/smoke.mjs',
     'runtime:smoke': 'node ./scripts/runtime-smoke.mjs',
@@ -61,6 +65,9 @@ if (!existsSync(packageLockPath)) {
   };
   for (const [name, expected] of Object.entries(requiredScripts)) {
     if (pkg.scripts?.[name] !== expected) fail('script-contract', `package.json:scripts.${name}`, `Expected "${expected}".`);
+  }
+  if (!pkg.scripts?.build?.includes('npm run notices')) {
+    fail('third-party-notices', 'package.json:scripts.build', 'Production build must emit runtime third-party license notices before hashing artifacts.');
   }
   if (!pkg.scripts?.build?.includes('build-manifest.mjs')) {
     fail('artifact-manifest', 'package.json:scripts.build', 'Production build must emit the SHA-256 build manifest.');
@@ -119,8 +126,14 @@ if (existsSync(mainPath)) {
 }
 
 const viteConfigPath = join(root, 'vite.config.ts');
-if (existsSync(viteConfigPath) && !/sourcemap:\s*false/.test(readFileSync(viteConfigPath, 'utf8'))) {
-  fail('production-sourcemaps', 'vite.config.ts', 'Production source maps must be disabled for the release build.');
+if (existsSync(viteConfigPath)) {
+  const viteConfig = readFileSync(viteConfigPath, 'utf8');
+  if (!/sourcemap:\s*false/.test(viteConfig)) {
+    fail('production-sourcemaps', 'vite.config.ts', 'Production source maps must be disabled for the release build.');
+  }
+  if (!viteConfig.includes('production-csp-hardening') || !viteConfig.includes('productionScriptPolicy')) {
+    fail('production-csp', 'vite.config.ts', 'Production build must harden the development CSP before emitting index.html.');
+  }
 }
 
 const indexPath = join(root, 'index.html');

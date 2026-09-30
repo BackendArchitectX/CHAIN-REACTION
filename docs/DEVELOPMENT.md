@@ -36,6 +36,8 @@ npm run doctor          # environment, architecture, lockfile, startup contract
 npm run lint            # repository and layer quality gate
 npm run repo:audit      # tracked junk/secrets/conflict/debt audit
 npm run license:audit   # dependency license metadata review
+npm run license:audit   # project/dependency rights metadata gate
+npm run notices         # generate runtime third-party license notices after a build
 npm run a11y            # accessibility contract gate
 npm run git:identity    # verify repository-local contributor identity
 npm run typecheck       # strict TypeScript validation
@@ -114,3 +116,10 @@ npm run verify
 ```
 
 Then ensure CI is green on Linux and Windows.
+
+
+## Project rights and third-party notices
+
+The repository is deliberately marked `UNLICENSED` and carries a root `LICENSE` rights notice. Do not change the project rights posture implicitly while updating dependencies or metadata.
+
+`npm run license:audit` checks the project/lockfile rights metadata and the reviewed dependency license identifiers. `npm run build` also generates `dist/THIRD_PARTY_LICENSES.txt` from installed runtime packages before the artifact manifest is created.

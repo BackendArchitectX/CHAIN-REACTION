@@ -27,15 +27,16 @@ Fixtures are deterministic and do not require a developer-specific database, mac
 1. repository/environment doctor;
 2. repository/layer quality gate;
 3. tracked-repository hygiene and common-secret audit;
-4. dependency license metadata audit;
+4. project rights/dependency license metadata audit;
 5. accessibility contract gate;
-6. deterministic automated tests, including a React server-render smoke contract;
+6. deterministic automated tests, including React server-render and workspace-navigation contracts;
 7. strict TypeScript production build;
-8. SHA-256 build manifest;
-9. consecutive-build reproducibility check;
-10. static production smoke and size budgets;
-11. served-production HTTP smoke;
-12. CycloneDX SBOM generation.
+8. runtime third-party license notice generation;
+9. SHA-256 build manifest;
+10. consecutive-build reproducibility check;
+11. static production smoke, CSP, notice, and size-budget checks;
+12. served-production HTTP smoke;
+13. CycloneDX SBOM generation.
 
 ## Cross-platform startup verification
 
@@ -79,3 +80,8 @@ Interactive accessibility behavior remains protected by the structural accessibi
 `tests/navigation.test.ts` protects the stable hash contract for mission workspaces. Direct hashes resolve deterministically, unrelated anchors are ignored, and the empty location resolves to the COMMAND workspace. Browser history synchronization is implemented with native History API events rather than a routing dependency.
 
 The HTTP smoke gate confirms that all hash deep links share the same production shell because fragments are client-side only. Full interactive Back/Forward behavior remains part of the manual browser walkthrough because the repository intentionally does not add a heavyweight browser-test stack solely for this small navigation surface.
+
+
+## Production security metadata
+
+The source HTML keeps the inline-script allowance needed by Vite's development React-refresh preamble. The production build removes that allowance from `script-src`, and `npm run smoke` rejects a built `index.html` that still permits inline scripts. This validates the emitted artifact rather than weakening local developer behavior for appearance.

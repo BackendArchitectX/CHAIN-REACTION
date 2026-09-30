@@ -26,6 +26,7 @@ record('npm runtime', npm.status === 0 && npmMajor === 10, npmVersion);
 const requiredPaths = [
   ['package.json', 'project manifest'],
   ['package-lock.json', 'committed deterministic lockfile'],
+  ['LICENSE', 'project rights notice'],
   ['.env.example', 'safe environment/configuration example'],
   ['tsconfig.json', 'strict TypeScript configuration'],
   ['vite.config.ts', 'Vite configuration'],
@@ -43,7 +44,8 @@ const requiredPaths = [
   ['scripts/lib/npm.mjs', 'cross-platform npm process adapter'],
   ['scripts/quality.mjs', 'repository quality gate'],
   ['scripts/repository-audit.mjs', 'tracked-repository hygiene and secret audit'],
-  ['scripts/license-audit.mjs', 'dependency license metadata audit'],
+  ['scripts/license-audit.mjs', 'project/dependency license metadata audit'],
+  ['scripts/third-party-notices.mjs', 'runtime third-party notice generator'],
   ['scripts/accessibility.mjs', 'accessibility contract gate'],
   ['scripts/git-identity.mjs', 'contributor identity audit'],
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
@@ -71,6 +73,7 @@ const lockPath = join(root, 'package-lock.json');
 if (existsSync(packagePath)) {
   const pkg = JSON.parse(readFileSync(packagePath, 'utf8'));
   record('Project version', pkg.version === '0.5.0', pkg.version ?? 'missing');
+  record('Project rights posture', pkg.license === 'UNLICENSED', pkg.license ?? 'missing');
   record('Single-step start script', pkg.scripts?.start === 'node ./scripts/bootstrap.mjs', pkg.scripts?.start ?? 'missing');
   record('Local-only dev binding', pkg.scripts?.dev === 'vite --host 127.0.0.1 --port 5173 --strictPort', pkg.scripts?.dev ?? 'missing');
   record('Explicit LAN opt-in', pkg.scripts?.['dev:lan'] === 'vite --host 0.0.0.0 --port 5173 --strictPort', pkg.scripts?.['dev:lan'] ?? 'missing');
@@ -79,18 +82,21 @@ if (existsSync(packagePath)) {
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
   record('Repository audit wired', pkg.scripts?.['repo:audit'] === 'node ./scripts/repository-audit.mjs', pkg.scripts?.['repo:audit'] ?? 'missing');
   record('License audit wired', pkg.scripts?.['license:audit'] === 'node ./scripts/license-audit.mjs', pkg.scripts?.['license:audit'] ?? 'missing');
+  record('Third-party notices wired', pkg.scripts?.notices === 'node ./scripts/third-party-notices.mjs', pkg.scripts?.notices ?? 'missing');
   record('Accessibility gate wired', pkg.scripts?.a11y === 'node ./scripts/accessibility.mjs', pkg.scripts?.a11y ?? 'missing');
   record('Git identity audit wired', pkg.scripts?.['git:identity'] === 'node ./scripts/git-identity.mjs', pkg.scripts?.['git:identity'] ?? 'missing');
   record('Static smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
   record('Runtime smoke gate wired', pkg.scripts?.['runtime:smoke'] === 'node ./scripts/runtime-smoke.mjs', pkg.scripts?.['runtime:smoke'] ?? 'missing');
   record('SBOM gate wired', pkg.scripts?.sbom === 'node ./scripts/sbom.mjs', pkg.scripts?.sbom ?? 'missing');
   record('Reproducibility gate wired', pkg.scripts?.reproducibility === 'node ./scripts/reproducibility.mjs', pkg.scripts?.reproducibility ?? 'missing');
+  record('Third-party notices in build', pkg.scripts?.build?.includes('npm run notices') === true, pkg.scripts?.build ?? 'missing');
   record('Artifact manifest wired', pkg.scripts?.build?.includes('build-manifest.mjs') === true, pkg.scripts?.build ?? 'missing');
 
   if (existsSync(lockPath)) {
     const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
     record('Lockfile schema', lock.lockfileVersion === 3, `v${lock.lockfileVersion ?? 'missing'}`);
     record('Manifest/lock parity', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, `${pkg.version} / ${lock.version ?? 'missing'}`);
+    record('License metadata parity', lock.packages?.['']?.license === pkg.license, `${pkg.license ?? 'missing'} / ${lock.packages?.['']?.license ?? 'missing'}`);
   }
 }
 
