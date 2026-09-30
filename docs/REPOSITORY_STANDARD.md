@@ -60,6 +60,8 @@ Every completed change must pass:
 8. CycloneDX SBOM generation.
 9. High/critical dependency audit in CI.
 10. CodeQL JavaScript/TypeScript static security analysis.
+11. Windows contract verification for the repository and one-step launchers.
+12. HTTP runtime smoke verification against the built application.
 
 ## Commit identity
 

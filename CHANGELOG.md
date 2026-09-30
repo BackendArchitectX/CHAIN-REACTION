@@ -22,6 +22,10 @@ All notable repository-level changes are documented here.
 - Added CodeQL JavaScript/TypeScript static analysis on main plus weekly scheduled scanning.
 - Added a consecutive-build reproducibility gate for production artifact manifests.
 - Hardened one-step bootstrap with a top-level npm dependency-tree health check before reusing node_modules.
+- Added Windows CI contract verification for the complete repository plus `start.cmd` and `run.ps1`.
+- Added CI verification of the executable Unix `start.sh` one-step launcher.
+- Added HTTP runtime smoke testing that boots the production preview and requests every declared build artifact.
+- Added a scheduled dependency-security audit so newly disclosed high/critical vulnerabilities are detected without requiring a new commit.
 
 ## 0.4.0 — Industry lifecycle and architecture hardening
 

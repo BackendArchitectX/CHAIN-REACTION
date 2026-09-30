@@ -10,6 +10,7 @@ CHAIN//REACTION keeps the competition build reproducible without adding a cloud 
 - CI rejects high/critical dependency advisories.
 - External GitHub Actions are pinned to immutable commit SHAs.
 - CodeQL scans JavaScript/TypeScript on main and on a weekly schedule.
+- A separate scheduled dependency audit re-checks the locked dependency graph weekly even when main has not changed.
 
 ## Production evidence
 

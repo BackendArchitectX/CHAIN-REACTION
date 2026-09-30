@@ -30,7 +30,7 @@ Or run:
 npm start
 ```
 
-That is the complete startup flow. The bootstrap verifies the supported runtime, restores dependencies from the committed lockfile only when necessary, starts the local application, and opens it in the browser.
+That is the complete startup flow. The bootstrap verifies the supported runtime, validates the installed dependency tree, restores dependencies from the committed lockfile only when necessary, starts the local application, and opens it in the browser. A fresh clone requires package-registry access for the initial locked dependency restore; after dependencies are present, CITY//01 itself has no cloud runtime dependency.
 
 **Prerequisites:** Node.js >=22.12 <23 and npm 10.x.
 
@@ -49,6 +49,7 @@ npm run build      # typecheck + production build + SHA-256 build manifest
 npm run lint       # repository/layer quality gate
 npm run reproducibility # build twice and require identical artifact manifests
 npm run smoke      # production asset/hash/budget smoke gate
+npm run runtime:smoke # serve dist and request every declared production asset
 npm run sbom       # CycloneDX software bill of materials
 npm run verify     # complete local release-quality gate
 npm run clean      # remove generated output/cache
@@ -63,6 +64,10 @@ npm run verify
 
 GitHub Actions restores the committed lockfile with npm ci, runs the same verification path, enforces the high/critical dependency-security gate, requires reproducible consecutive builds, and publishes the build manifest plus CycloneDX SBOM as short-lived assurance evidence. External Actions are pinned to immutable commit SHAs, and CodeQL performs JavaScript/TypeScript static security analysis on main.
 
+## Startup assurance
+
+Windows is the primary competition target. CI validates the complete repository on Windows and exercises both `run.ps1` and `start.cmd` through the same bootstrap used by users. Linux CI also exercises the executable `start.sh` contract. CI uses `CHAIN_REACTION_PREFLIGHT_ONLY=1` so the real launch wrappers can be verified without leaving a long-running development server behind.
+
 ## Production assurance
 
 Every successful verification produces:
@@ -70,6 +75,7 @@ Every successful verification produces:
 - `dist/build-manifest.json` with SHA-256 and byte size for every production artifact.
 - `dist/sbom.cdx.json` with a CycloneDX software bill of materials.
 - A production smoke check that verifies artifact hashes, local asset references, absence of source maps, and static bundle-size budgets.
+- An HTTP runtime smoke check that boots the production preview and requests the application plus every artifact declared by the build manifest.
 
 See `docs/SUPPLY_CHAIN.md` for the supply-chain contract and `docs/adr/` for architectural decisions.
 
@@ -133,8 +139,10 @@ CHAIN-REACTION/
 ├── .github/
 │   ├── CODEOWNERS
 │   └── workflows/
-│       ├── ci.yml                 # verification + security gate
+│       ├── ci.yml                 # Linux + Windows verification
+│       ├── codeql.yml             # static security analysis
 │       ├── pages.yml              # gated static deployment
+│       ├── security-audit.yml     # scheduled dependency audit
 │       └── single-branch.yml      # main-only repository enforcement
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -149,6 +157,11 @@ CHAIN-REACTION/
 │   ├── bootstrap.mjs              # one-step dependency bootstrap + startup
 │   ├── doctor.mjs                 # environment/repository preflight
 │   ├── quality.mjs                # repository/layer quality gate
+│   ├── build-manifest.mjs         # SHA-256 production manifest
+│   ├── reproducibility.mjs        # consecutive-build determinism gate
+│   ├── smoke.mjs                  # static artifact smoke gate
+│   ├── runtime-smoke.mjs          # served-production HTTP smoke gate
+│   ├── sbom.mjs                   # CycloneDX SBOM generator
 │   └── clean.mjs                  # generated-output cleanup
 ├── src/
 │   ├── app/

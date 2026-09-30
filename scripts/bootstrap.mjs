@@ -87,5 +87,11 @@ assertRuntime();
 ensureDependencies();
 console.log('[CHAIN//REACTION] Running startup preflight...');
 run(npmCommand, ['run', 'doctor']);
+
+if (process.env.CHAIN_REACTION_PREFLIGHT_ONLY === '1') {
+  console.log('[CHAIN//REACTION] Preflight-only startup contract completed successfully.');
+  process.exit(0);
+}
+
 console.log('[CHAIN//REACTION] Starting CITY//01 at http://127.0.0.1:5173 ...');
 run(npmCommand, ['run', 'dev', '--', '--open']);
