@@ -32,10 +32,10 @@ export function validateHardwareProof(proof: HardwareProof | null | undefined) {
   if (proof.schema !== 'chainreaction.qnn-proof.v1') return { valid: false, reason: 'Unsupported proof schema.' };
   if (!/snapdragon/i.test(proof.device)) return { valid: false, reason: 'Device field does not identify a Snapdragon target.' };
   if (!/qnn/i.test(proof.provider)) return { valid: false, reason: 'Execution provider is not QNN.' };
-  if (!proof.modelSha256 || proof.modelSha256.startsWith('REPLACE_')) return { valid: false, reason: 'Model hash is missing.' };
-  if (proof.npuCoveragePct < 90) return { valid: false, reason: 'NPU layer coverage is below the 90% competition gate.' };
+  if (!/^[a-f0-9]{64}$/i.test(proof.modelSha256 ?? '')) return { valid: false, reason: 'Model SHA-256 must be a 64-character hexadecimal digest.' };
+  if (!(proof.npuCoveragePct >= 90 && proof.npuCoveragePct <= 100)) return { valid: false, reason: 'NPU layer coverage must be between 90% and 100% for the competition gate.' };
   if (!(proof.p50Ms > 0 && proof.p95Ms >= proof.p50Ms && proof.coldLoadMs > 0 && proof.memoryMb > 0)) return { valid: false, reason: 'Benchmark fields are incomplete or inconsistent.' };
-  if (!proof.verifiedAt) return { valid: false, reason: 'Profile verification timestamp is missing.' };
+  if (!proof.verifiedAt || !Number.isFinite(Date.parse(proof.verifiedAt))) return { valid: false, reason: 'Profile verification timestamp is missing or invalid.' };
   return { valid: true, reason: 'Exact-device QNN profile passes the CHAIN//REACTION hardware proof gate.' };
 }
 
