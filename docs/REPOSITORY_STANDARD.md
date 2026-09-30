@@ -1,44 +1,62 @@
 # Repository Standard
 
-This repository follows a single-maintainer trunk model for the competition build.
+CHAIN//REACTION uses a single-maintainer trunk model optimized for a competition-grade, reproducible build.
 
 ## Branch policy
 
-- `main` is the only maintained branch.
+- `main` is the only maintained repository branch.
 - No long-lived `develop`, `release`, or feature branches.
-- All repository automation targets `main`.
-- CI must be green before a commit is treated as release-ready.
+- Product features are isolated in `src/features/*`, not in persistent Git branches.
+- Repository automation removes non-`main` branches.
+- All CI and deployment workflows consume `main`.
+- A mainline change is release-ready only after the complete verification pipeline passes.
 
 ## Source organization
 
-- `src/core` contains deterministic domain logic and must remain UI-independent.
+- `src/app` owns application composition and mission orchestration.
+- `src/features` owns user-facing vertical slices.
+- `src/ui` contains reusable presentation components.
+- `src/shared` contains pure cross-feature helpers.
+- `src/core` contains deterministic domain logic and must remain UI-, browser-, and network-independent.
 - `src/data` contains versioned synthetic-world configuration.
-- `src/edge` contains accelerator/runtime proof logic and must fail closed when proof is incomplete.
-- `scripts` contains development lifecycle automation only.
-- `tests` mirrors critical behavior rather than visual implementation details.
+- `src/edge` contains accelerator/runtime proof logic and fails closed when proof is incomplete.
+- `scripts` contains lifecycle and repository automation only.
+- `tests` verifies behavior, invariants, metamorphic properties, and proof boundaries.
 - `docs` contains architecture, assurance, security, accessibility, operations, and demo evidence.
 - `public` contains static runtime assets and example proof manifests.
 
+## Reproducibility standard
+
+- Node.js is constrained to `>=22.12 <23`.
+- npm is constrained to major version `10`.
+- Direct dependency versions are exact.
+- `package-lock.json` is committed and required.
+- Bootstrap and CI restore dependencies with `npm ci`.
+- CI uses the lockfile as its cache key and performs a high/critical dependency audit.
+
 ## Code standards
 
-- Strict TypeScript.
+- Strict TypeScript for both `src` and `tests`.
 - Explicit domain types for simulation and planning contracts.
+- No dynamic code execution in product/runtime modules.
 - No fabricated hardware metrics.
 - No cloud AI dependency in the critical path.
 - Deterministic tests for safety and counterfactual behavior.
 - Every hard constraint belongs to the independent Safety Kernel.
-- Browser/runtime integration must not leak into core simulation modules.
+- Browser/runtime integration must not leak into deterministic core/data/edge modules.
+- `src/main.tsx` remains a thin bootstrap rather than a feature container.
 
-## Change quality gate
+## Mainline quality gate
 
-Every mainline change must pass:
+Every completed change must pass:
 
-1. Environment/repository doctor.
-2. TypeScript compile validation.
-3. Automated test suite.
-4. Production build.
-5. High/critical dependency audit gate.
+1. Environment, runtime, folder, and lockfile doctor.
+2. Repository/layer quality gate.
+3. TypeScript compile validation for source and tests.
+4. Deterministic automated tests.
+5. Production build.
+6. High/critical dependency audit in CI.
 
 ## Commit identity
 
-The competition repository is maintained by `BackendArchitectX`. Do not add co-author trailers or automated contributor identities.
+The competition repository is maintained by `BackendArchitectX`. Do not add co-author trailers or automated contributor identities. Repository automation that writes to `main` must use the owner's GitHub noreply identity.

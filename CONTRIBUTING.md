@@ -14,7 +14,7 @@ Before any mainline change is treated as complete:
 npm run verify
 ```
 
-The verification pipeline checks the project contract, strict TypeScript, deterministic tests, and the production build. GitHub Actions additionally enforces the dependency security severity gate.
+The verification pipeline checks the environment/repository contract, repository/layer quality rules, strict TypeScript for source and tests, deterministic tests, and the production build. GitHub Actions restores the committed lockfile with npm ci and additionally enforces the dependency security severity gate.
 
 ## Scope
 

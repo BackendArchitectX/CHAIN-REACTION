@@ -1,0 +1,42 @@
+name: bootstrap-lockfile
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bootstrap-lockfile
+  cancel-in-progress: false
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - name: Generate deterministic npm lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit lockfile to main when required
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- package-lock.json && git ls-files --error-unmatch package-lock.json >/dev/null 2>&1; then
+            echo "package-lock.json is already current."
+            exit 0
+          fi
+          git config user.name "P_K"
+          git config user.email "96111851+BackendArchitectX@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "build: commit deterministic npm lockfile"
+          git push origin HEAD:main

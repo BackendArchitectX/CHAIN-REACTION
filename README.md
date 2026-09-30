@@ -30,9 +30,9 @@ Or run:
 npm start
 ```
 
-That is the complete startup flow. The bootstrap verifies the supported runtime, prepares dependencies only when necessary, starts the local application, and opens it in the browser.
+That is the complete startup flow. The bootstrap verifies the supported runtime, restores dependencies from the committed lockfile only when necessary, starts the local application, and opens it in the browser.
 
-**Prerequisites:** Node.js 22 LTS and npm 10+.
+**Prerequisites:** Node.js >=22.12 <23 and npm 10.x.
 
 No backend terminal, second process, Docker container, database, API key, or cloud service is required for the CITY//01 build. The default development server binds to `127.0.0.1`; LAN exposure is opt-in with `npm run dev:lan`.
 
@@ -46,7 +46,8 @@ npm run dev:lan    # explicitly expose development server to LAN
 npm run typecheck  # strict TypeScript validation
 npm test           # deterministic assurance suite
 npm run build      # production build
-npm run verify     # doctor + typecheck + tests + production build
+npm run lint       # repository/layer quality gate
+npm run verify     # doctor + lint + typecheck + tests + production build
 npm run clean      # remove generated output/cache
 npm run preview    # preview production output locally
 ```
@@ -57,7 +58,7 @@ Before treating a change as complete:
 npm run verify
 ```
 
-GitHub Actions additionally runs the dependency-security severity gate and exports the generated npm lockfile as a short-lived reproducibility artifact.
+GitHub Actions restores the committed lockfile with npm ci, runs the same verification path, and enforces the high/critical dependency-security gate.
 
 ## Product capabilities
 
@@ -134,6 +135,7 @@ CHAIN-REACTION/
 ├── scripts/
 │   ├── bootstrap.mjs              # one-step dependency bootstrap + startup
 │   ├── doctor.mjs                 # environment/repository preflight
+│   ├── quality.mjs                # repository/layer quality gate
 │   └── clean.mjs                  # generated-output cleanup
 ├── src/
 │   ├── app/
@@ -217,4 +219,4 @@ CHAIN//REACTION does **not** autonomously control critical infrastructure.
 
 Maintained as a single-author competition project by **BackendArchitectX**.
 
-Current application version: **0.4.0**.
+Current application version: **0.5.0**.

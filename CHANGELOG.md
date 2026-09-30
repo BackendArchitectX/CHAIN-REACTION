@@ -2,6 +2,18 @@
 
 All notable repository-level changes are documented here.
 
+## 0.5.0 — Reproducible mainline and premium repository hardening
+
+- Committed deterministic npm lockfile and standardized locked installs with `npm ci`.
+- Added a zero-dependency repository quality gate for layer boundaries, exact dependency policy, unsafe dynamic execution, and manifest/lock parity.
+- Extended strict TypeScript validation to test sources and added switch fallthrough protection.
+- Made development and preview ports explicit and strict to avoid silent port drift.
+- Added `.gitattributes` and hardened npm repository policy.
+- Hardened CI with lockfile caching, explicit Ubuntu runner, timeouts, concurrency, and the complete verification pipeline.
+- Hardened main-only branch pruning with robust branch-name URL encoding.
+- Added an operations runbook covering startup, failure modes, recovery, verification, and network posture.
+- Clarified that feature isolation lives under `src/features/*` while Git remains single-branch on `main`.
+
 ## 0.4.0 — Industry lifecycle and architecture hardening
 
 - Added one-step cross-platform bootstrap with automatic browser launch.

@@ -9,7 +9,7 @@ const checks = [];
 
 function record(name, pass, detail) {
   checks.push({ name, pass, detail });
-  console.log(`${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(30)} ${detail}`);
+  console.log(`${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(32)} ${detail}`);
 }
 
 function exists(relativePath) {
@@ -22,33 +22,49 @@ record('Node.js runtime', nodeMajor === 22 && nodeMinor >= 12, process.version);
 const npm = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
 const npmVersion = npm.status === 0 ? npm.stdout.trim() : 'not available';
 const npmMajor = npm.status === 0 ? Number(npmVersion.split('.')[0]) : 0;
-record('npm', npm.status === 0 && npmMajor >= 10, npmVersion);
+record('npm runtime', npm.status === 0 && npmMajor === 10, npmVersion);
 
-record('package.json', exists('package.json'), 'project manifest');
-record('TypeScript config', exists('tsconfig.json'), 'tsconfig.json');
-record('Vite config', exists('vite.config.ts'), 'vite.config.ts');
-record('Application entry point', exists('src/main.tsx'), 'src/main.tsx');
-record('Application composition', exists('src/app/App.tsx'), 'src/app/App.tsx');
-record('Mission orchestration', exists('src/app/useMission.ts'), 'src/app/useMission.ts');
-record('Fail-safe UI boundary', exists('src/app/ErrorBoundary.tsx'), 'src/app/ErrorBoundary.tsx');
-record('Safety Kernel', exists('src/core/safety.ts'), 'src/core/safety.ts');
-record('Edge proof boundary', exists('src/edge/capabilities.ts'), 'src/edge/capabilities.ts');
-record('Tests', exists('tests'), 'tests/');
-record('One-click Windows start', exists('start.cmd'), 'start.cmd');
-record('PowerShell start', exists('run.ps1'), 'run.ps1');
-record('Bootstrap automation', exists('scripts/bootstrap.mjs'), 'scripts/bootstrap.mjs');
+const requiredPaths = [
+  ['package.json', 'project manifest'],
+  ['package-lock.json', 'committed deterministic lockfile'],
+  ['tsconfig.json', 'strict TypeScript configuration'],
+  ['vite.config.ts', 'Vite configuration'],
+  ['src/main.tsx', 'thin browser bootstrap'],
+  ['src/app/App.tsx', 'application composition'],
+  ['src/app/useMission.ts', 'mission orchestration'],
+  ['src/app/ErrorBoundary.tsx', 'fail-safe UI boundary'],
+  ['src/core/safety.ts', 'independent Safety Kernel'],
+  ['src/edge/capabilities.ts', 'edge proof boundary'],
+  ['tests', 'assurance test suite'],
+  ['start.cmd', 'one-click Windows launcher'],
+  ['run.ps1', 'PowerShell launcher'],
+  ['start.sh', 'Unix launcher'],
+  ['scripts/bootstrap.mjs', 'one-step bootstrap automation'],
+  ['scripts/quality.mjs', 'repository quality gate'],
+];
 
+for (const [path, detail] of requiredPaths) record(path, exists(path), detail);
 for (const feature of ['command', 'futures', 'chaos', 'edge', 'audit']) {
   record(`Feature: ${feature}`, exists(`src/features/${feature}`), `src/features/${feature}/`);
 }
 
 const packagePath = join(root, 'package.json');
+const lockPath = join(root, 'package-lock.json');
 if (existsSync(packagePath)) {
   const pkg = JSON.parse(readFileSync(packagePath, 'utf8'));
-  record('Project version', pkg.version === '0.4.0', pkg.version ?? 'missing');
+  record('Project version', pkg.version === '0.5.0', pkg.version ?? 'missing');
   record('Single-step start script', pkg.scripts?.start === 'node ./scripts/bootstrap.mjs', pkg.scripts?.start ?? 'missing');
-  record('Local-only dev binding', pkg.scripts?.dev === 'vite --host 127.0.0.1', pkg.scripts?.dev ?? 'missing');
+  record('Local-only dev binding', pkg.scripts?.dev === 'vite --host 127.0.0.1 --port 5173 --strictPort', pkg.scripts?.dev ?? 'missing');
+  record('Explicit LAN opt-in', pkg.scripts?.['dev:lan'] === 'vite --host 0.0.0.0 --port 5173 --strictPort', pkg.scripts?.['dev:lan'] ?? 'missing');
   record('Node engine contract', pkg.engines?.node === '>=22.12 <23', pkg.engines?.node ?? 'missing');
+  record('npm engine contract', pkg.engines?.npm === '>=10 <11', pkg.engines?.npm ?? 'missing');
+  record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
+
+  if (existsSync(lockPath)) {
+    const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
+    record('Lockfile schema', lock.lockfileVersion === 3, `v${lock.lockfileVersion ?? 'missing'}`);
+    record('Manifest/lock parity', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, `${pkg.version} / ${lock.version ?? 'missing'}`);
+  }
 }
 
 const mainPath = join(root, 'src', 'main.tsx');
@@ -73,4 +89,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('\n[CHAIN//REACTION] Environment, architecture, and repository contract verified.');
+console.log('\n[CHAIN//REACTION] Environment, architecture, reproducibility, and startup contract verified.');

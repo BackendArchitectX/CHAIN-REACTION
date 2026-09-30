@@ -37,15 +37,19 @@ function assertRuntime() {
   }
 
   const npmVersion = spawnSync(npmCommand, ['--version'], { encoding: 'utf8', shell: false });
-  if (npmVersion.status !== 0) fail('npm was not found. Install Node.js 22 LTS with npm 10+.');
+  if (npmVersion.status !== 0) fail('npm was not found. Install Node.js 22 LTS with npm 10.');
   const npmMajor = Number(npmVersion.stdout.trim().split('.')[0]);
-  if (!Number.isFinite(npmMajor) || npmMajor < 10) fail(`npm 10+ is required. Detected ${npmVersion.stdout.trim()}.`);
+  if (npmMajor !== 10) fail(`npm 10.x is required. Detected ${npmVersion.stdout.trim()}.`);
+
+  if (!existsSync(packageLock)) {
+    fail('package-lock.json is required for deterministic one-step startup. Restore it from main before starting.');
+  }
 }
 
 function dependencyFingerprint() {
   const hash = createHash('sha256');
   hash.update(readFileSync(packageJson));
-  if (existsSync(packageLock)) hash.update(readFileSync(packageLock));
+  hash.update(readFileSync(packageLock));
   return hash.digest('hex');
 }
 
@@ -64,13 +68,8 @@ function ensureDependencies() {
     return;
   }
 
-  console.log('[CHAIN//REACTION] Preparing project dependencies...');
-  if (existsSync(packageLock)) {
-    run(npmCommand, ['ci', '--no-fund']);
-  } else {
-    console.warn('[CHAIN//REACTION] package-lock.json is not committed; using exact top-level versions with npm install.');
-    run(npmCommand, ['install', '--no-fund']);
-  }
+  console.log('[CHAIN//REACTION] Restoring locked project dependencies...');
+  run(npmCommand, ['ci', '--no-fund', '--no-audit']);
 
   mkdirSync(cacheDir, { recursive: true });
   writeFileSync(stampFile, dependencyFingerprint(), 'utf8');

@@ -2,6 +2,8 @@
 
 ## One-step start
 
+The supported development flow is intentionally one step after cloning.
+
 ### Windows
 
 Double-click `start.cmd`, or run:
@@ -16,12 +18,12 @@ Double-click `start.cmd`, or run:
 npm start
 ```
 
-The bootstrap verifies Node.js 22, installs dependencies only when required, opens the browser, and starts the local Vite application on `127.0.0.1`.
+The bootstrap validates the runtime, restores dependencies from the committed lockfile only when required, runs the repository preflight, starts Vite on `127.0.0.1:5173`, and opens the browser.
 
 ## Prerequisites
 
-- Node.js 22 LTS
-- npm 10+
+- Node.js `>=22.12 <23`
+- npm `10.x`
 - Git when working from a clone
 
 No backend process, Docker container, API key, database, or cloud service is required for the current CITY//01 simulation build.
@@ -29,20 +31,28 @@ No backend process, Docker container, API key, database, or cloud service is req
 ## Standard commands
 
 ```bash
-npm start          # one-step bootstrap and launch
-npm run doctor     # environment/repository contract check
-npm run dev        # local-only development server
-npm run dev:lan    # explicitly expose dev server to LAN
-npm test           # deterministic test suite
-npm run typecheck  # strict TypeScript validation
+npm start          # one-step deterministic bootstrap and launch
+npm run doctor     # environment, architecture, lockfile, and startup contract
+npm run lint       # zero-dependency repository and layer quality gate
+npm run typecheck  # strict TypeScript validation for src + tests
+npm test           # deterministic assurance suite
 npm run build      # production build
-npm run verify     # doctor + typecheck + tests + build
+npm run verify     # complete local quality gate
 npm run clean      # remove generated output/cache
+npm run dev        # localhost-only development server on :5173
+npm run dev:lan    # explicit LAN exposure on :5173
+npm run preview    # localhost-only production preview on :4173
 ```
+
+## Dependency policy
+
+`package-lock.json` is committed and is part of the build contract. Local bootstrap and CI use `npm ci`; do not delete the lockfile or replace locked installs with floating dependency resolution.
+
+Top-level dependency versions in `package.json` are exact. The repository quality gate verifies manifest/lockfile version and engine parity.
 
 ## Runtime safety
 
-The default development server binds to `127.0.0.1`. LAN exposure requires the explicit `npm run dev:lan` command.
+Development binds to `127.0.0.1` by default. LAN exposure requires `npm run dev:lan`. Port `5173` is strict so an occupied port fails clearly instead of silently starting on a different address. Production preview uses strict port `4173`.
 
 ## Generated files
 
@@ -55,7 +65,7 @@ Never commit:
 - coverage output
 - local `.env*` files except `.env.example`
 
-## Before a commit
+## Before a mainline change
 
 Run:
 
@@ -63,4 +73,8 @@ Run:
 npm run verify
 ```
 
-The GitHub Actions `verify` workflow performs the same project verification plus the dependency security severity gate.
+The same gate is executed in GitHub Actions together with the high/critical dependency audit.
+
+## Main-only workflow
+
+This repository intentionally has one maintained branch: `main`. Product features live under `src/features/*`; they are feature modules, not long-lived Git branches. All completed work is integrated directly into `main` and non-`main` repository branches are automatically removed.
