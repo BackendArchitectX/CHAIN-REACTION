@@ -41,6 +41,7 @@ const requiredPaths = [
   ['scripts/bootstrap.mjs', 'one-step bootstrap automation'],
   ['scripts/lib/npm.mjs', 'cross-platform npm process adapter'],
   ['scripts/quality.mjs', 'repository quality gate'],
+  ['scripts/accessibility.mjs', 'accessibility contract gate'],
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
   ['scripts/smoke.mjs', 'static production smoke gate'],
   ['scripts/runtime-smoke.mjs', 'HTTP runtime smoke gate'],
@@ -48,6 +49,8 @@ const requiredPaths = [
   ['scripts/reproducibility.mjs', 'reproducible-build gate'],
   ['.github/workflows/security-audit.yml', 'scheduled dependency-security audit'],
   ['docs/SUPPLY_CHAIN.md', 'software supply-chain contract'],
+  ['docs/SYSTEM_BOUNDARIES.md', 'system applicability boundary'],
+  ['docs/TESTING.md', 'testing and verification strategy'],
   ['docs/adr/0001-main-only-trunk.md', 'main-only trunk ADR'],
   ['docs/adr/0002-deterministic-core.md', 'deterministic core ADR'],
 ];
@@ -68,6 +71,7 @@ if (existsSync(packagePath)) {
   record('Node engine contract', pkg.engines?.node === '>=22.12 <23', pkg.engines?.node ?? 'missing');
   record('npm engine contract', pkg.engines?.npm === '>=10 <11', pkg.engines?.npm ?? 'missing');
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
+  record('Accessibility gate wired', pkg.scripts?.a11y === 'node ./scripts/accessibility.mjs', pkg.scripts?.a11y ?? 'missing');
   record('Static smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
   record('Runtime smoke gate wired', pkg.scripts?.['runtime:smoke'] === 'node ./scripts/runtime-smoke.mjs', pkg.scripts?.['runtime:smoke'] ?? 'missing');
   record('SBOM gate wired', pkg.scripts?.sbom === 'node ./scripts/sbom.mjs', pkg.scripts?.sbom ?? 'missing');

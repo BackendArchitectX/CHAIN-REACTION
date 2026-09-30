@@ -21,9 +21,9 @@ jobs:
       CI: true
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -57,9 +57,9 @@ jobs:
       CI: true
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -79,4 +79,31 @@ jobs:
         env:
           CHAIN_REACTION_PREFLIGHT_ONLY: '1'
           CHAIN_REACTION_SKIP_INSTALL: '1'
+        run: start.cmd
+
+  fresh-clone-startup:
+    name: Fresh-clone one-step startup (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    env:
+      CI: true
+      CHAIN_REACTION_PREFLIGHT_ONLY: '1'
+    steps:
+      - name: Checkout clean repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - name: Set up Node.js without dependency cache
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .node-version
+      - name: One-step startup from fresh Linux checkout
+        if: runner.os == 'Linux'
+        shell: bash
+        run: ./start.sh
+      - name: One-step startup from fresh Windows checkout
+        if: runner.os == 'Windows'
+        shell: cmd
         run: start.cmd

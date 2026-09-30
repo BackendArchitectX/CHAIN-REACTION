@@ -9,10 +9,30 @@ import { AuditView } from '../features/audit/AuditView';
 
 const TABS: AppTab[] = ['COMMAND', 'FUTURES', 'CHAOS LAB', 'EDGE LAB', 'AUDIT'];
 
+function tabSlug(tab: AppTab) {
+  return tab.toLowerCase().replaceAll(' ', '-');
+}
+
 export function App() {
   const mission = useMission();
 
+  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex: number | null = null;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % TABS.length;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + TABS.length) % TABS.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = TABS.length - 1;
+    if (nextIndex == null) return;
+
+    event.preventDefault();
+    const nextTab = TABS[nextIndex];
+    mission.setTab(nextTab);
+    window.requestAnimationFrame(() => document.getElementById(`tab-${tabSlug(nextTab)}`)?.focus());
+  };
+
   return <div className="app-shell">
+    <a className="skip-link" href="#workspace">Skip to mission workspace</a>
+
     <header className="topbar">
       <div className="brand-block">
         <div className="brand">CHAIN//REACTION</div>
@@ -25,21 +45,38 @@ export function App() {
       </div>
     </header>
 
-    <nav className="nav" aria-label="Primary">
-      {TABS.map(tab => (
-        <button key={tab} className={mission.tab === tab ? 'active' : ''} onClick={() => mission.setTab(tab)}>
+    <nav className="nav" aria-label="Mission workspaces" role="tablist">
+      {TABS.map((tab, index) => (
+        <button
+          key={tab}
+          id={`tab-${tabSlug(tab)}`}
+          role="tab"
+          aria-selected={mission.tab === tab}
+          aria-controls="workspace"
+          tabIndex={mission.tab === tab ? 0 : -1}
+          className={mission.tab === tab ? 'active' : ''}
+          onClick={() => mission.setTab(tab)}
+          onKeyDown={event => handleTabKeyDown(event, index)}
+        >
           {tab}
         </button>
       ))}
     </nav>
 
-    {mission.tab === 'COMMAND' && <CommandView mission={mission} />}
-    {mission.tab === 'FUTURES' && <FuturesView mission={mission} />}
-    {mission.tab === 'CHAOS LAB' && <ChaosLabView mission={mission} />}
-    {mission.tab === 'EDGE LAB' && <EdgeLabView mission={mission} />}
-    {mission.tab === 'AUDIT' && <AuditView mission={mission} />}
+    <div
+      id="workspace"
+      role="tabpanel"
+      aria-labelledby={`tab-${tabSlug(mission.tab)}`}
+      tabIndex={-1}
+    >
+      {mission.tab === 'COMMAND' && <CommandView mission={mission} />}
+      {mission.tab === 'FUTURES' && <FuturesView mission={mission} />}
+      {mission.tab === 'CHAOS LAB' && <ChaosLabView mission={mission} />}
+      {mission.tab === 'EDGE LAB' && <EdgeLabView mission={mission} />}
+      {mission.tab === 'AUDIT' && <AuditView mission={mission} />}
+    </div>
 
-    <footer className="statusbar">
+    <footer className="statusbar" role="status" aria-live="polite" aria-atomic="true">
       <span>EDGE PULSE <b>{mission.chaos.npuUnavailable ? 'DEGRADED' : 'READY'}</b></span>
       <span>
         NPU{' '}

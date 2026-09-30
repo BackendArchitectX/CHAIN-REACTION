@@ -18,7 +18,7 @@ export function FuturesView({ mission }: { mission: Mission }) {
 
   return <main className="stack">
     {mission.lease === 'EXPIRED' && (
-      <div className="lease-alert">
+      <div className="lease-alert" role="alert">
         <div>
           <b>FORECAST LEASE EXPIRED</b>
           <span>
@@ -43,6 +43,7 @@ export function FuturesView({ mission }: { mission: Mission }) {
           max="240"
           step="15"
           value={mission.futureOffset}
+          aria-valuetext={`View future at +${mission.futureOffset} seconds`}
           onChange={event => mission.setFutureOffset(Number(event.target.value))}
         />
         <span>+240s</span>
@@ -50,7 +51,7 @@ export function FuturesView({ mission }: { mission: Mission }) {
       </div>
     </section>
 
-    <section className="branch-grid">
+    <section className="branch-grid" aria-label="Intervention choices">
       {mission.evaluations.map(evaluation => (
         <BranchCard
           key={evaluation.plan}
@@ -121,7 +122,12 @@ function BranchCard({
   snapshot: Mission['futureSnapshots'][PlanId];
 }) {
   const hospital = snapshot.nodes.hospN.status;
-  return <button className={`branch-card ${selected ? 'selected' : ''}`} onClick={onSelect}>
+  return <button
+    className={`branch-card ${selected ? 'selected' : ''}`}
+    onClick={onSelect}
+    aria-pressed={selected}
+    aria-label={`${PLANS[evaluation.plan].name}, robustness ${evaluation.robustness} percent, safety ${evaluation.safety}`}
+  >
     <div className="branch-top">
       <small>{PLANS[evaluation.plan].name}</small>
       <span className={`safety-chip ${evaluation.safety.toLowerCase()}`}>{evaluation.safety}</span>

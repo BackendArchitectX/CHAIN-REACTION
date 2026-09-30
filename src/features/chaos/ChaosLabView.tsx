@@ -33,6 +33,8 @@ export function ChaosLabView({ mission }: { mission: Mission }) {
           <button
             key={key}
             className={`chaos-card ${mission.chaos[key] ? 'active' : ''}`}
+            aria-pressed={mission.chaos[key]}
+            aria-label={`${title}. ${detail}. ${mission.chaos[key] ? 'Active' : 'Inactive'}.`}
             onClick={() => mission.toggleChaos(key, time, `${title} injected into CITY//01.`)}
           >
             <span>{mission.chaos[key] ? 'ACTIVE' : 'INJECT'}</span>

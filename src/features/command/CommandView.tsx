@@ -98,7 +98,11 @@ export function CommandView({ mission }: { mission: Mission }) {
         <span>T+{mission.t} / {SCENARIO_DURATION_SEC}s</span>
       </div>
       <div className="control-buttons">
-        <button onClick={() => mission.setPlaying(!mission.playing)} className={mission.playing ? 'attention' : ''}>
+        <button
+          onClick={() => mission.setPlaying(!mission.playing)}
+          className={mission.playing ? 'attention' : ''}
+          aria-pressed={mission.playing}
+        >
           {mission.playing ? 'PAUSE LIVE RUN' : 'RUN MONSOON ZERO'}
         </button>
         <button onClick={() => mission.advance(15)} className="secondary">ADVANCE +15s</button>
