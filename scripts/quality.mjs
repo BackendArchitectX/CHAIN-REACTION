@@ -51,6 +51,7 @@ if (!existsSync(packageLockPath)) {
     start: 'node ./scripts/bootstrap.mjs',
     lint: 'node ./scripts/quality.mjs',
     a11y: 'node ./scripts/accessibility.mjs',
+    'repo:audit': 'node ./scripts/repository-audit.mjs',
     'git:identity': 'node ./scripts/git-identity.mjs',
     smoke: 'node ./scripts/smoke.mjs',
     'runtime:smoke': 'node ./scripts/runtime-smoke.mjs',
@@ -63,8 +64,8 @@ if (!existsSync(packageLockPath)) {
   if (!pkg.scripts?.build?.includes('build-manifest.mjs')) {
     fail('artifact-manifest', 'package.json:scripts.build', 'Production build must emit the SHA-256 build manifest.');
   }
-  if (!pkg.scripts?.verify?.includes('npm run a11y') || !pkg.scripts?.verify?.includes('npm run smoke') || !pkg.scripts?.verify?.includes('npm run runtime:smoke') || !pkg.scripts?.verify?.includes('npm run sbom') || !pkg.scripts?.verify?.includes('npm run reproducibility')) {
-    fail('release-gate', 'package.json:scripts.verify', 'Verification must include accessibility, reproducibility, static smoke, runtime smoke, and SBOM gates.');
+  if (!pkg.scripts?.verify?.includes('npm run repo:audit') || !pkg.scripts?.verify?.includes('npm run a11y') || !pkg.scripts?.verify?.includes('npm run smoke') || !pkg.scripts?.verify?.includes('npm run runtime:smoke') || !pkg.scripts?.verify?.includes('npm run sbom') || !pkg.scripts?.verify?.includes('npm run reproducibility')) {
+    fail('release-gate', 'package.json:scripts.verify', 'Verification must include repository audit, accessibility, reproducibility, static smoke, runtime smoke, and SBOM gates.');
   }
 
   for (const [group, dependencies] of Object.entries({ dependencies: pkg.dependencies ?? {}, devDependencies: pkg.devDependencies ?? {} })) {

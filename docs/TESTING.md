@@ -22,14 +22,15 @@ Fixtures are deterministic and do not require a developer-specific database, mac
 
 1. repository/environment doctor;
 2. repository/layer quality gate;
-3. accessibility contract gate;
-4. deterministic automated tests;
-5. strict TypeScript production build;
-6. SHA-256 build manifest;
-7. consecutive-build reproducibility check;
-8. static production smoke and size budgets;
-9. served-production HTTP smoke;
-10. CycloneDX SBOM generation.
+3. tracked-repository hygiene and common-secret audit;
+4. accessibility contract gate;
+5. deterministic automated tests, including a React server-render smoke contract;
+6. strict TypeScript production build;
+7. SHA-256 build manifest;
+8. consecutive-build reproducibility check;
+9. static production smoke and size budgets;
+10. served-production HTTP smoke;
+11. CycloneDX SBOM generation.
 
 ## Cross-platform startup verification
 
@@ -60,3 +61,9 @@ Before a competition presentation, perform and record:
 - real Snapdragon exact-device QNN profiling if hardware is available.
 
 Manual checks are evidence. They must not be converted into unmeasured claims.
+
+## Frontend render contract
+
+`tests/ui-render.test.tsx` renders the application shell through React's server renderer without a browser DOM. This catches broken imports, browser-global leakage during render, and loss of the primary mission-control structure without adding a heavyweight browser-test dependency.
+
+Interactive accessibility behavior remains protected by the structural accessibility gate and is complemented by the documented manual finalist walkthrough.

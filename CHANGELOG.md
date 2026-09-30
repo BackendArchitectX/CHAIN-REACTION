@@ -4,6 +4,8 @@ All notable repository-level changes are documented here.
 
 ## 0.5.0 — Reproducible mainline and premium repository hardening
 
+- Added a tracked-repository audit for generated junk, real environment files, conflict markers, unresolved source debt markers, private-key material, and common credential/token signatures.
+- Added a React server-render smoke test to catch broken imports and render-time browser-global leakage without adding a heavyweight UI-test dependency.
 - Added a contributor-identity audit that verifies the repository's BackendArchitectX GitHub noreply identity, rejects co-author trailers, and checks the push actor on main.
 - Added a local `npm run git:identity` pre-commit identity check for `backendarchitectx`.
 - Committed deterministic npm lockfile and standardized locked installs with `npm ci`.

@@ -76,19 +76,20 @@ Every completed change must pass:
 
 1. environment/runtime/folder/lockfile doctor;
 2. repository/layer quality gate;
-3. accessibility contract gate;
-4. strict TypeScript validation;
-5. deterministic automated tests;
-6. production build with SHA-256 artifact manifest;
-7. consecutive-build reproducibility verification;
-8. static production smoke and bundle budgets;
-9. served-production HTTP smoke;
-10. CycloneDX SBOM generation;
-11. high/critical dependency audit;
-12. CodeQL JavaScript/TypeScript analysis;
-13. Windows repository and launcher verification;
-14. fresh-clone one-step startup on Linux and Windows;
-15. contributor-identity audit.
+3. tracked-repository hygiene/common-secret audit;
+4. accessibility contract gate;
+5. strict TypeScript validation;
+6. deterministic automated tests including a React render contract;
+7. production build with SHA-256 artifact manifest;
+8. consecutive-build reproducibility verification;
+9. static production smoke and bundle budgets;
+10. served-production HTTP smoke;
+11. CycloneDX SBOM generation;
+12. high/critical dependency audit;
+13. CodeQL JavaScript/TypeScript analysis;
+14. Windows repository and launcher verification;
+15. fresh-clone one-step startup on Linux and Windows;
+16. contributor-identity audit.
 
 ## Workflow supply-chain standard
 

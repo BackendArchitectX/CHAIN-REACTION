@@ -63,6 +63,7 @@ No separate backend terminal, Docker container, database, Redis, Kafka, API key,
 npm start               # one-step bootstrap + browser launch
 npm run doctor          # environment/repository contract
 npm run lint            # repository/layer quality gate
+npm run repo:audit      # tracked junk/secrets/conflict/debt audit
 npm run a11y            # accessibility contract gate
 npm run git:identity     # verify local backendarchitectx Git identity
 npm run typecheck       # strict TypeScript validation
@@ -170,6 +171,7 @@ CHAIN-REACTION/
 │   ├── bootstrap.mjs
 │   ├── doctor.mjs
 │   ├── quality.mjs
+│   ├── repository-audit.mjs
 │   ├── accessibility.mjs
 │   ├── git-identity.mjs
 │   ├── build-manifest.mjs
@@ -221,6 +223,7 @@ A release-quality verification includes:
 
 - repository/environment doctor;
 - architectural dependency checks;
+- tracked-repository hygiene, unresolved conflict/debt marker, and common secret-material checks;
 - accessibility contract checks;
 - strict TypeScript;
 - deterministic and metamorphic tests;
