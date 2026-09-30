@@ -27,14 +27,15 @@ Fixtures are deterministic and do not require a developer-specific database, mac
 1. repository/environment doctor;
 2. repository/layer quality gate;
 3. tracked-repository hygiene and common-secret audit;
-4. accessibility contract gate;
-5. deterministic automated tests, including a React server-render smoke contract;
-6. strict TypeScript production build;
-7. SHA-256 build manifest;
-8. consecutive-build reproducibility check;
-9. static production smoke and size budgets;
-10. served-production HTTP smoke;
-11. CycloneDX SBOM generation.
+4. dependency license metadata audit;
+5. accessibility contract gate;
+6. deterministic automated tests, including a React server-render smoke contract;
+7. strict TypeScript production build;
+8. SHA-256 build manifest;
+9. consecutive-build reproducibility check;
+10. static production smoke and size budgets;
+11. served-production HTTP smoke;
+12. CycloneDX SBOM generation.
 
 ## Cross-platform startup verification
 

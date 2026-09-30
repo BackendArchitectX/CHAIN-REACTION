@@ -70,6 +70,7 @@ npm start               # one-step bootstrap + browser launch
 npm run doctor          # environment/repository contract
 npm run lint            # repository/layer quality gate
 npm run repo:audit      # tracked junk/secrets/conflict/debt audit
+npm run license:audit   # dependency license metadata review
 npm run a11y            # accessibility contract gate
 npm run git:identity     # verify local backendarchitectx Git identity
 npm run typecheck       # strict TypeScript validation
@@ -179,6 +180,7 @@ CHAIN-REACTION/
 │   ├── doctor.mjs
 │   ├── quality.mjs
 │   ├── repository-audit.mjs
+│   ├── license-audit.mjs
 │   ├── accessibility.mjs
 │   ├── git-identity.mjs
 │   ├── build-manifest.mjs
@@ -232,6 +234,7 @@ A release-quality verification includes:
 - repository/environment doctor;
 - architectural dependency checks;
 - tracked-repository hygiene, unresolved conflict/debt marker, and common secret-material checks;
+- dependency license metadata review;
 - accessibility contract checks;
 - strict TypeScript;
 - deterministic and metamorphic tests;

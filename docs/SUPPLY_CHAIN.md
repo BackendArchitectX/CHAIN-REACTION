@@ -11,6 +11,9 @@ CHAIN//REACTION keeps the competition build reproducible without adding a cloud 
 - External GitHub Actions are pinned to immutable commit SHAs.
 - CodeQL scans JavaScript/TypeScript on main and on a weekly schedule.
 - A separate scheduled dependency audit re-checks the locked dependency graph weekly even when main has not changed.
+- `npm run license:audit` fails when a dependency has missing license metadata or introduces a license identifier that has not been explicitly reviewed.
+- Automated license metadata checks are an engineering safeguard only; they are not presented as legal-compliance certification.
+- Dependabot/Renovate is intentionally not configured because branch-generating update automation conflicts with the repository's strict single-`main` policy; scheduled audits provide detection without creating persistent automation branches.
 
 ## Production evidence
 

@@ -43,6 +43,7 @@ const requiredPaths = [
   ['scripts/lib/npm.mjs', 'cross-platform npm process adapter'],
   ['scripts/quality.mjs', 'repository quality gate'],
   ['scripts/repository-audit.mjs', 'tracked-repository hygiene and secret audit'],
+  ['scripts/license-audit.mjs', 'dependency license metadata audit'],
   ['scripts/accessibility.mjs', 'accessibility contract gate'],
   ['scripts/git-identity.mjs', 'contributor identity audit'],
   ['scripts/build-manifest.mjs', 'production artifact manifest'],
@@ -77,6 +78,7 @@ if (existsSync(packagePath)) {
   record('npm engine contract', pkg.engines?.npm === '>=10 <11', pkg.engines?.npm ?? 'missing');
   record('Quality gate wired', pkg.scripts?.lint === 'node ./scripts/quality.mjs', pkg.scripts?.lint ?? 'missing');
   record('Repository audit wired', pkg.scripts?.['repo:audit'] === 'node ./scripts/repository-audit.mjs', pkg.scripts?.['repo:audit'] ?? 'missing');
+  record('License audit wired', pkg.scripts?.['license:audit'] === 'node ./scripts/license-audit.mjs', pkg.scripts?.['license:audit'] ?? 'missing');
   record('Accessibility gate wired', pkg.scripts?.a11y === 'node ./scripts/accessibility.mjs', pkg.scripts?.a11y ?? 'missing');
   record('Git identity audit wired', pkg.scripts?.['git:identity'] === 'node ./scripts/git-identity.mjs', pkg.scripts?.['git:identity'] ?? 'missing');
   record('Static smoke gate wired', pkg.scripts?.smoke === 'node ./scripts/smoke.mjs', pkg.scripts?.smoke ?? 'missing');
