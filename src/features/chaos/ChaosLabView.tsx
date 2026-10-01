@@ -3,12 +3,12 @@ import type { Mission } from '../../app/useMission';
 import type { ChaosFlags } from '../../core/types';
 import { PanelTitle } from '../../ui/primitives';
 
-const CHAOS_CASES: Array<[keyof ChaosFlags, string, string, number]> = [
-  ['roadBlocked', 'ROAD_12 BLOCK', 'Invalidates the mobile-unit access assumption before activation.', 74],
-  ['sensorConflict', 'CONTRADICTORY SENSOR', 'Water sensor reports normal while camera evidence reports flood.', 24],
-  ['staleCamera', 'STALE CAMERA FEED', 'Reduces perception freshness and trust without hiding the incident.', 36],
-  ['secondShock', 'SECONDARY LOAD SPIKE', 'Tests post-intervention resilience and recovery debt.', 185],
-  ['npuUnavailable', 'NPU UNAVAILABLE', 'Forces explicit degraded edge state; simulation remains operational.', 0],
+const CHAOS_CASES: Array<[keyof ChaosFlags, string, string]> = [
+  ['roadBlocked', 'ROAD_12 BLOCK', 'May be injected only through T+74, when ROAD_12 blockage first enters modeled history.'],
+  ['sensorConflict', 'CONTRADICTORY SENSOR', 'May be injected only through T+20, when the water-sensor observation enters evidence history.'],
+  ['staleCamera', 'STALE CAMERA FEED', 'May be injected only through T+8, when the camera observation enters evidence history.'],
+  ['secondShock', 'SECONDARY LOAD SPIKE', 'May be injected only through T+185, when the secondary shock enters modeled history.'],
+  ['npuUnavailable', 'NPU UNAVAILABLE', 'Current runtime capability toggle; it does not rewrite historical simulation evidence.'],
 ];
 
 const COVERAGE = [
@@ -29,13 +29,13 @@ export function ChaosLabView({ mission }: { mission: Mission }) {
     <section className="panel">
       <PanelTitle left="CHAOS LAB" right="RED-TEAM THE SYSTEM, NOT JUST THE CITY" />
       <div className="chaos-grid">
-        {CHAOS_CASES.map(([key, title, detail, time]) => (
+        {CHAOS_CASES.map(([key, title, detail]) => (
           <button
             key={key}
             className={`chaos-card ${mission.chaos[key] ? 'active' : ''}`}
             aria-pressed={mission.chaos[key]}
             aria-label={`${title}. ${detail}. ${mission.chaos[key] ? 'Active' : 'Inactive'}.`}
-            onClick={() => mission.toggleChaos(key, time, title)}
+            onClick={() => mission.toggleChaos(key, title)}
           >
             <span>{mission.chaos[key] ? 'ACTIVE' : 'INJECT'}</span>
             <b>{title}</b>

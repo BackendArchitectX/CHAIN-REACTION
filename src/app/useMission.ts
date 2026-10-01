@@ -4,6 +4,7 @@ import { evidenceAt, simulate, snapshotAt } from '../core/engine';
 import { evaluateAllPlans, pairedPrevention, selectedPlanSensitivity } from '../core/planning';
 import { analyzeEvidence, normalizeEvidence } from '../core/evidence';
 import { evaluateForecastLease } from '../core/leases';
+import { evaluateChaosMutation } from '../core/chaos';
 import { traceFingerprint } from '../core/integrity';
 import { deriveRuntimeTrust } from '../core/runtime';
 import { decisionStability, evaluateCommitEligibility, informationValue } from '../core/decision';
@@ -191,15 +192,20 @@ export function useMission() {
     setAudit([{ time: 0, kind: 'system', message: 'CITY//01 initialized with deterministic seed 271828.', ref: 'SYS-0001' }]);
   };
 
-  const toggleChaos = (key: keyof ChaosFlags, minimumTime: number, label: string) => {
-    const at = Math.max(t, minimumTime);
+  const toggleChaos = (key: keyof ChaosFlags, label: string) => {
+    const decision = evaluateChaosMutation(key, t);
+    if (!decision.allowed) {
+      appendAudit('system', `${label} mutation rejected: ${decision.reason}`, 'CHAOS-REJECT');
+      return;
+    }
+
     const enabled = !chaosRef.current[key];
     const nextChaos = { ...chaosRef.current, [key]: enabled };
     chaosRef.current = nextChaos;
-    setT(value => Math.max(value, minimumTime));
+    setT(value => Math.max(value, decision.effectiveTimeSec));
     setChaos(nextChaos);
     setWorldRevision(value => value + 1);
-    appendAudit('observed', `${label} ${enabled ? 'enabled' : 'cleared'} in CITY//01.`, 'E', at);
+    appendAudit('observed', `${label} ${enabled ? 'enabled' : 'cleared'} in CITY//01.`, 'E', decision.effectiveTimeSec);
   };
 
   const replan = () => {
