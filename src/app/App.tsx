@@ -28,9 +28,9 @@ function CausalBrand({ mission }: { mission: Mission }) {
     >
       <span className="brand-word" aria-hidden="true">CHAIN</span>
       <span className="brand-reactor" key={eventKey} aria-hidden="true">
-        <svg className="brand-reactor-svg" viewBox="0 0 52 54" focusable="false">
-          <path className="brand-slash brand-slash-one" d="M16 4 L8 50" />
-          <path className="brand-slash brand-slash-two" d="M44 4 L36 50" />
+        <svg className="brand-reactor-svg" viewBox="0 0 42 54" focusable="false">
+          <path className="brand-slash brand-slash-one" d="M15 4 L7 50" />
+          <path className="brand-slash brand-slash-two" d="M33 4 L25 50" />
         </svg>
       </span>
       <span className="brand-word" aria-hidden="true">REACTION</span>

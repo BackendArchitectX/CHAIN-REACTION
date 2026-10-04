@@ -176,9 +176,9 @@ body{
 .causal-brand .brand-word{display:inline-block}
 .causal-brand .brand-reactor{
   position:relative;
-  width:.82em;
+  width:.68em;
   height:.96em;
-  margin-inline:.055em;
+  margin-inline:.035em;
   display:inline-grid;
   place-items:center;
   isolation:isolate
