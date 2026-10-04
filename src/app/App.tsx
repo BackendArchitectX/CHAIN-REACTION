@@ -1,11 +1,42 @@
 import React from 'react';
-import { useMission } from './useMission';
+import { useMission, type Mission } from './useMission';
 import { CommandView } from '../features/command/CommandView';
 import { FuturesView } from '../features/futures/FuturesView';
 import { ChaosLabView } from '../features/chaos/ChaosLabView';
 import { EdgeLabView } from '../features/edge/EdgeLabView';
 import { AuditView } from '../features/audit/AuditView';
 import { APP_TABS, tabSlug } from './navigation';
+
+
+function CausalBrand({ mission }: { mission: Mission }) {
+  const latestTrace = mission.liveRun.final.trace.at(-1);
+  const latestNode = latestTrace?.ref ? mission.liveRun.final.nodes[latestTrace.ref] : undefined;
+  const activationTime = mission.activePlan !== 'NO_ACTION' && mission.liveRun.final.planActivated
+    ? mission.liveRun.final.planActivationTime
+    : null;
+  const activationIsLatest = activationTime != null && activationTime >= (latestTrace?.time ?? -1);
+  const eventKey = activationIsLatest
+    ? `plan-${mission.activePlan}-${activationTime}`
+    : latestTrace?.id ?? 'idle';
+  const signal = activationIsLatest ? 'intervention' : latestNode?.status ?? (mission.playing ? 'live' : 'idle');
+
+  return (
+    <div
+      className={`brand causal-brand ${mission.playing ? 'is-live' : ''} ${eventKey !== 'idle' ? 'has-event' : ''} is-${signal}`}
+      role="img"
+      aria-label="CHAIN//REACTION"
+    >
+      <span className="brand-word" aria-hidden="true">CHAIN</span>
+      <span className="brand-reactor" key={eventKey} aria-hidden="true">
+        <svg className="brand-reactor-svg" viewBox="0 0 52 54" focusable="false">
+          <path className="brand-slash brand-slash-one" d="M16 4 L8 50" />
+          <path className="brand-slash brand-slash-two" d="M44 4 L36 50" />
+        </svg>
+      </span>
+      <span className="brand-word" aria-hidden="true">REACTION</span>
+    </div>
+  );
+}
 
 export function App() {
   const mission = useMission();
@@ -29,7 +60,7 @@ export function App() {
 
     <header className="topbar">
       <div className="brand-block">
-        <div className="brand">CHAIN//REACTION</div>
+        <CausalBrand mission={mission} />
         <div className="subtitle">EDGE CAUSAL RESILIENCE INTELLIGENCE</div>
       </div>
       <div className="topmeta">

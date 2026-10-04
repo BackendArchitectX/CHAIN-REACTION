@@ -164,3 +164,77 @@ body{
 :focus-visible{outline-color:#526d80}
 .nav button:focus-visible,.branch-card:focus-visible,.chaos-card:focus-visible{border-color:#526d80}
 
+
+
+/* Causal brand — minimal twin-slash lightfield */
+.causal-brand{
+  --brand-accent:#4f7cff;
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap
+}
+.causal-brand .brand-word{display:inline-block}
+.causal-brand .brand-reactor{
+  position:relative;
+  width:.82em;
+  height:.96em;
+  margin-inline:.055em;
+  display:inline-grid;
+  place-items:center;
+  isolation:isolate
+}
+.causal-brand .brand-reactor:after{
+  content:"";
+  position:absolute;
+  inset:12% 18%;
+  border-radius:42%;
+  background:radial-gradient(ellipse at center,rgba(79,124,255,.14),rgba(79,124,255,.04) 46%,transparent 72%);
+  opacity:.36;
+  filter:blur(.025em);
+  pointer-events:none
+}
+.causal-brand .brand-reactor-svg{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  overflow:visible
+}
+.causal-brand .brand-slash{
+  fill:none;
+  stroke:var(--brand-accent);
+  stroke-width:5.4;
+  stroke-linecap:square;
+  stroke-linejoin:miter;
+  vector-effect:non-scaling-stroke;
+  transform-box:fill-box;
+  transform-origin:center;
+  transition:filter 180ms ease,opacity 180ms ease,transform 180ms ease
+}
+.causal-brand.is-live:not(.has-event) .brand-slash-one{animation:brand-live-one 5.6s ease-in-out infinite}
+.causal-brand.is-live:not(.has-event) .brand-slash-two{animation:brand-live-two 5.6s ease-in-out infinite}
+.causal-brand.has-event .brand-reactor{animation:brand-event-core 820ms cubic-bezier(.22,1,.36,1) both}
+.causal-brand.has-event .brand-slash-one{animation:brand-event-one 820ms cubic-bezier(.22,1,.36,1) both}
+.causal-brand.has-event .brand-slash-two{animation:brand-event-two 820ms cubic-bezier(.22,1,.36,1) both}
+.causal-brand.is-recovering.has-event .brand-slash-one{animation-name:brand-event-two}
+.causal-brand.is-recovering.has-event .brand-slash-two{animation-name:brand-event-one}
+@keyframes brand-live-one{
+  0%,12%,30%,100%{filter:none;opacity:1}
+  18%,23%{filter:drop-shadow(0 0 .16em rgba(79,124,255,.34));opacity:.98}
+}
+@keyframes brand-live-two{
+  0%,16%,34%,100%{filter:none;opacity:1}
+  22%,27%{filter:drop-shadow(0 0 .16em rgba(79,124,255,.34));opacity:.98}
+}
+@keyframes brand-event-core{
+  0%,100%{transform:scale(1)}
+  46%{transform:scale(1.035)}
+}
+@keyframes brand-event-one{
+  0%,100%{filter:none;opacity:1;transform:translateY(0)}
+  28%,48%{filter:drop-shadow(0 0 .22em rgba(79,124,255,.5));opacity:1;transform:translateY(-.015em)}
+}
+@keyframes brand-event-two{
+  0%,18%,100%{filter:none;opacity:1;transform:translateY(0)}
+  44%,66%{filter:drop-shadow(0 0 .22em rgba(79,124,255,.5));opacity:1;transform:translateY(-.015em)}
+}
